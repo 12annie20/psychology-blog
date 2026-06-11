@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>後台管理 — 晴空萬里</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@200;300;400&family=Noto+Sans+TC:wght@200;300;400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --ink: #1a1612; --ink-soft: #3e3830; --ink-faint: #8a817a;
+  --paper: #f7f4ef; --warm: #c9a96e; --accent: #7a5c4a; --dim: #2a2420;
+  --border: rgba(74,68,64,0.12); --red: #c0392b;
+}
+html { font-size: 15px; }
+body { background: #f0ede7; color: var(--ink); font-family: 'Noto Sans TC', sans-serif; font-weight: 300; -webkit-font-smoothing: antialiased; }
+
+/* LOGIN */
+#loginScreen { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--dim); }
+.login-box { background: var(--paper); padding: 3rem; width: 360px; }
+.login-box h1 { font-family: 'Noto Serif TC', serif; font-weight: 300; font-size: 1.3rem; margin-bottom: 0.5rem; }
+.login-box p { font-size: 0.78rem; color: var(--ink-faint); margin-bottom: 2rem; }
+.field { margin-bottom: 1.2rem; }
+.field label { font-size: 0.7rem; letter-spacing: 0.15em; color: var(--ink-faint); display: block; margin-bottom: 0.5rem; }
+.field input { width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--border); background: #fff; font-family: inherit; font-size: 0.9rem; font-weight: 300; color: var(--ink); outline: none; transition: border-color 0.2s; }
+.field input:focus { border-color: var(--warm); }
+.btn-primary { width: 100%; padding: 0.85rem; background: var(--dim); color: #f0ebe3; font-family: inherit; font-size: 0.82rem; letter-spacing: 0.15em; border: none; cursor: pointer; transition: background 0.2s; }
+.btn-primary:hover { background: var(--accent); }
+.login-error { font-size: 0.75rem; color: var(--red); margin-top: 0.8rem; text-align: center; min-height: 1.2rem; }
+
+/* ADMIN SHELL */
+#adminShell { display: none; min-height: 100vh; }
+.admin-nav { background: var(--dim); padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 56px; position: sticky; top: 0; z-index: 100; }
+.admin-nav-logo { font-family: 'Noto Serif TC', serif; font-weight: 200; font-size: 1rem; color: rgba(240,235,227,0.7); text-decoration: none; }
+.admin-nav-logo span { color: var(--warm); }
+.admin-nav-right { display: flex; gap: 1rem; align-items: center; }
+.nav-tab { font-size: 0.72rem; letter-spacing: 0.12em; color: rgba(240,235,227,0.4); cursor: pointer; padding: 0.35rem 0.8rem; border: 1px solid transparent; transition: all 0.2s; background: none; font-family: inherit; }
+.nav-tab:hover, .nav-tab.active { color: var(--warm); border-color: rgba(201,169,110,0.3); }
+.btn-logout { font-size: 0.7rem; letter-spacing: 0.12em; color: rgba(240,235,227,0.3); background: none; border: none; cursor: pointer; font-family: inherit; }
+.btn-logout:hover { color: rgba(240,235,227,0.7); }
+
+.admin-body { max-width: 1100px; margin: 0 auto; padding: 2.5rem 2rem; }
+
+/* PANELS */
+.panel { display: none; }
+.panel.active { display: block; }
+
+/* POST LIST */
+.panel-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; }
+.panel-head h2 { font-family: 'Noto Serif TC', serif; font-weight: 300; font-size: 1.2rem; }
+.btn-new { background: var(--dim); color: #f0ebe3; padding: 0.6rem 1.4rem; font-family: inherit; font-size: 0.75rem; letter-spacing: 0.12em; border: none; cursor: pointer; transition: background 0.2s; }
+.btn-new:hover { background: var(--accent); }
+
+.post-table { width: 100%; border-collapse: collapse; background: #fff; }
+.post-table th { font-size: 0.65rem; letter-spacing: 0.2em; color: var(--ink-faint); padding: 0.9rem 1.2rem; text-align: left; border-bottom: 1px solid var(--border); font-weight: 300; }
+.post-table td { padding: 1rem 1.2rem; border-bottom: 1px solid var(--border); font-size: 0.82rem; color: var(--ink-soft); vertical-align: middle; }
+.post-table tr:hover td { background: #faf8f4; }
+.post-table .title-cell { font-family: 'Noto Serif TC', serif; font-size: 0.9rem; color: var(--ink); max-width: 300px; }
+.post-table .cat-badge { font-size: 0.62rem; letter-spacing: 0.12em; color: var(--warm); }
+.tbl-actions { display: flex; gap: 0.5rem; }
+.btn-edit { font-size: 0.7rem; padding: 0.3rem 0.8rem; border: 1px solid var(--border); background: none; cursor: pointer; color: var(--ink-faint); font-family: inherit; transition: all 0.2s; }
+.btn-edit:hover { border-color: var(--warm); color: var(--accent); }
+.btn-del { font-size: 0.7rem; padding: 0.3rem 0.8rem; border: 1px solid transparent; background: none; cursor: pointer; color: rgba(192,57,43,0.5); font-family: inherit; transition: all 0.2s; }
+.btn-del:hover { border-color: var(--red); color: var(--red); }
+.empty-table { text-align: center; padding: 4rem; color: var(--ink-faint); font-size: 0.85rem; }
+
+/* EDITOR */
+.editor-wrap { background: #fff; padding: 2.5rem; }
+.editor-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; padding-bottom: 1.2rem; border-bottom: 1px solid var(--border); }
+.editor-head h2 { font-family: 'Noto Serif TC', serif; font-weight: 300; font-size: 1.1rem; }
+.editor-actions { display: flex; gap: 0.8rem; }
+.btn-cancel { background: none; border: 1px solid var(--border); padding: 0.55rem 1.2rem; font-family: inherit; font-size: 0.75rem; letter-spacing: 0.1em; color: var(--ink-faint); cursor: pointer; }
+.btn-cancel:hover { border-color: var(--warm); color: var(--accent); }
+.btn-save { background: var(--warm); border: none; padding: 0.55rem 1.6rem; font-family: inherit; font-size: 0.75rem; letter-spacing: 0.12em; color: var(--dim); cursor: pointer; transition: background 0.2s; }
+.btn-save:hover { background: var(--accent); color: #f0ebe3; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
+@media (max-width: 640px) { .form-row { grid-template-columns: 1fr; } }
+.form-group { display: flex; flex-direction: column; gap: 0.5rem; }
+.form-group.full { grid-column: 1 / -1; }
+.form-group label { font-size: 0.68rem; letter-spacing: 0.18em; color: var(--ink-faint); }
+.form-group input, .form-group select, .form-group textarea {
+  padding: 0.75rem 1rem; border: 1px solid var(--border); background: #faf8f4;
+  font-family: 'Noto Sans TC', sans-serif; font-size: 0.88rem; font-weight: 300; color: var(--ink);
+  outline: none; transition: border-color 0.2s; resize: none;
+}
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--warm); background: #fff; }
+.title-input { font-family: 'Noto Serif TC', serif !important; font-size: 1.1rem !important; }
+.content-area { min-height: 420px; font-size: 0.88rem !important; line-height: 1.9; }
+.editor-hint { font-size: 0.68rem; color: var(--ink-faint); margin-top: 0.4rem; line-height: 1.6; }
+.save-status { font-size: 0.72rem; color: var(--warm); min-width: 80px; text-align: right; }
+
+/* PREVIEW */
+.preview-wrap { margin-top: 2rem; padding: 2rem; background: var(--paper); border: 1px solid var(--border); display: none; }
+.preview-wrap.show { display: block; }
+.preview-label { font-size: 0.65rem; letter-spacing: 0.22em; color: var(--warm); margin-bottom: 1.2rem; }
+.preview-content { font-family: 'Noto Serif TC', serif; font-weight: 300; font-size: 1rem; line-height: 2.1; color: var(--ink-soft); }
+.preview-content h2 { font-weight: 300; font-size: 1.1rem; color: var(--ink); margin: 2rem 0 0.9rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border); }
+.preview-content h3 { font-weight: 300; font-size: 0.98rem; color: var(--accent); margin: 1.8rem 0 0.7rem; }
+.preview-content p { margin-bottom: 1.4rem; }
+.preview-content blockquote { margin: 2rem 0; padding: 1.5rem 0 1.5rem 1.8rem; border-left: 1.5px solid var(--warm); color: var(--accent); white-space: pre-line; }
+.btn-preview { background: none; border: 1px solid var(--border); padding: 0.5rem 1.2rem; font-family: inherit; font-size: 0.72rem; letter-spacing: 0.12em; color: var(--ink-faint); cursor: pointer; margin-right: 0.5rem; }
+.btn-preview:hover { border-color: var(--warm); color: var(--accent); }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="login-box">
+    <h1>後台管理</h1>
+    <p>晴空萬里・言言善也</p>
+    <div class="field">
+      <label>電子郵件</label>
+      <input type="email" id="loginEmail" placeholder="your@email.com">
+    </div>
+    <div class="field">
+      <label>密碼</label>
+      <input type="password" id="loginPassword" placeholder="••••••••">
+    </div>
+    <button class="btn-primary" id="loginBtn">登入</button>
+    <div class="login-error" id="loginError"></div>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div id="adminShell">
+  <nav class="admin-nav">
+    <a href="index.html" class="admin-nav-logo" target="_blank">晴空萬里<span>・</span>言言善也</a>
+    <div class="admin-nav-right">
+      <button class="nav-tab active" id="tabPosts" onclick="showPanel('posts')">文章列表</button>
+      <button class="nav-tab" id="tabNew" onclick="showPanel('editor', null)">＋ 新增文章</button>
+      <button class="btn-logout" id="logoutBtn">登出</button>
+    </div>
+  </nav>
+
+  <div class="admin-body">
+    <!-- POSTS PANEL -->
+    <div class="panel active" id="panelPosts">
+      <div class="panel-head">
+        <h2>所有文章</h2>
+        <button class="btn-new" onclick="showPanel('editor', null)">＋ 新增文章</button>
+      </div>
+      <table class="post-table">
+        <thead>
+          <tr><th>標題</th><th>分類</th><th>發布日期</th><th>操作</th></tr>
+        </thead>
+        <tbody id="postTableBody">
+          <tr><td colspan="4" class="empty-table">載入中…</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- EDITOR PANEL -->
+    <div class="panel" id="panelEditor">
+      <div class="editor-wrap">
+        <div class="editor-head">
+          <h2 id="editorTitle">新增文章</h2>
+          <div class="editor-actions">
+            <span class="save-status" id="saveStatus"></span>
+            <button class="btn-preview" id="togglePreview">預覽</button>
+            <button class="btn-cancel" onclick="showPanel('posts')">取消</button>
+            <button class="btn-save" id="saveBtn">儲存發布</button>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group full">
+            <label>文章標題</label>
+            <input type="text" id="fTitle" class="title-input" placeholder="輸入標題…">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>分類</label>
+            <select id="fCategory">
+              <option value="">選擇分類</option>
+              <option>影劇心理學</option>
+              <option>生活與情緒</option>
+              <option>輔導現場</option>
+              <option>穿搭與自我</option>
+              <option>跑咖日記</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>標籤（逗號分隔）</label>
+            <input type="text" id="fTags" placeholder="心理學, 依附理論, 耀眼">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group full">
+            <label>封面圖片網址（建議使用 Imgur 上傳後貼入連結）</label>
+            <input type="url" id="fCover" placeholder="https://i.imgur.com/xxxxx.jpg">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group full">
+            <label>摘要（顯示在文章卡片上）</label>
+            <textarea id="fExcerpt" rows="2" placeholder="一句話描述這篇文章…"></textarea>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group full">
+            <label>文章內容（支援 HTML 標籤）</label>
+            <textarea id="fContent" class="content-area" rows="20" placeholder="在這裡撰寫文章內容…
+
+支援的 HTML 標籤：
+&lt;h2&gt;章節標題&lt;/h2&gt;
+&lt;h3&gt;小標題&lt;/h3&gt;
+&lt;p&gt;段落文字&lt;/p&gt;
+&lt;blockquote&gt;引言台詞&lt;/blockquote&gt;
+&lt;img src=&quot;圖片網址&quot;&gt;
+
+心理學概念框：
+&lt;div class=&quot;concept-box&quot;&gt;
+  &lt;span class=&quot;label&quot;&gt;心理學概念｜概念名稱&lt;/span&gt;
+  &lt;p&gt;解說內容&lt;/p&gt;
+&lt;/div&gt;"></textarea>
+            <div class="editor-hint">封面圖片請先上傳至 imgur.com，再將連結貼入上方欄位。文章內圖片同理。</div>
+          </div>
+        </div>
+
+        <div class="preview-wrap" id="previewWrap">
+          <div class="preview-label">文章預覽</div>
+          <div class="preview-content" id="previewContent"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, collection, getDocs, doc, getDoc, addDoc, updateDoc, deleteDoc, serverTimestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBfVUjvhYXFzeEEnlZagxH48cY3Qh0IrvA",
+  authDomain: "psychology-blog-6566c.firebaseapp.com",
+  projectId: "psychology-blog-6566c",
+  storageBucket: "psychology-blog-6566c.firebasestorage.app",
+  messagingSenderId: "835080836966",
+  appId: "1:835080836966:web:bb0048b5c1d568b09e1aa7"
+};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+let editingId = null;
+
+// AUTH
+onAuthStateChanged(auth, user => {
+  if (user) { document.getElementById('loginScreen').style.display='none'; document.getElementById('adminShell').style.display='block'; loadPosts(); }
+  else { document.getElementById('loginScreen').style.display='flex'; document.getElementById('adminShell').style.display='none'; }
+});
+
+document.getElementById('loginBtn').addEventListener('click', async () => {
+  const email = document.getElementById('loginEmail').value;
+  const pw = document.getElementById('loginPassword').value;
+  const err = document.getElementById('loginError');
+  err.textContent = '';
+  try { await signInWithEmailAndPassword(auth, email, pw); }
+  catch(e) { err.textContent = '帳號或密碼錯誤，請再試一次。'; }
+});
+
+document.getElementById('loginPassword').addEventListener('keydown', e => { if (e.key==='Enter') document.getElementById('loginBtn').click(); });
+document.getElementById('logoutBtn').addEventListener('click', () => signOut(auth));
+
+// POSTS
+async function loadPosts() {
+  const tbody = document.getElementById('postTableBody');
+  try {
+    const q = query(collection(db,'posts'), orderBy('createdAt','desc'));
+    const snap = await getDocs(q);
+    if (snap.empty) { tbody.innerHTML = '<tr><td colspan="4" class="empty-table">還沒有文章，點右上角「新增文章」開始吧。</td></tr>'; return; }
+    tbody.innerHTML = snap.docs.map(d => {
+      const p = d.data();
+      const date = p.createdAt ? p.createdAt.toDate().toLocaleDateString('zh-TW') : '—';
+      return `<tr>
+        <td class="title-cell">${p.title||'（無標題）'}</td>
+        <td><span class="cat-badge">${p.category||'—'}</span></td>
+        <td>${date}</td>
+        <td><div class="tbl-actions">
+          <button class="btn-edit" onclick="editPost('${d.id}')">編輯</button>
+          <button class="btn-del" onclick="deletePost('${d.id}','${(p.title||'').replace(/'/g,"\\'")}')">刪除</button>
+        </div></td>
+      </tr>`;
+    }).join('');
+  } catch(e) { tbody.innerHTML = '<tr><td colspan="4" class="empty-table">載入失敗</td></tr>'; }
+}
+
+window.editPost = async function(id) {
+  editingId = id;
+  const snap = await getDoc(doc(db,'posts',id));
+  if (!snap.exists()) return;
+  const p = snap.data();
+  document.getElementById('fTitle').value = p.title||'';
+  document.getElementById('fCategory').value = p.category||'';
+  document.getElementById('fTags').value = p.tags||'';
+  document.getElementById('fCover').value = p.coverImage||'';
+  document.getElementById('fExcerpt').value = p.excerpt||'';
+  document.getElementById('fContent').value = p.content||'';
+  document.getElementById('editorTitle').textContent = '編輯文章';
+  showPanel('editor', id);
+};
+
+window.deletePost = async function(id, title) {
+  if (!confirm(`確定要刪除「${title}」？此動作無法復原。`)) return;
+  await deleteDoc(doc(db,'posts',id));
+  loadPosts();
+};
+
+document.getElementById('saveBtn').addEventListener('click', async () => {
+  const title = document.getElementById('fTitle').value.trim();
+  if (!title) { alert('請輸入文章標題'); return; }
+  const status = document.getElementById('saveStatus');
+  status.textContent = '儲存中…';
+  const data = {
+    title,
+    category: document.getElementById('fCategory').value,
+    tags: document.getElementById('fTags').value,
+    coverImage: document.getElementById('fCover').value.trim(),
+    excerpt: document.getElementById('fExcerpt').value.trim(),
+    content: document.getElementById('fContent').value,
+  };
+  try {
+    if (editingId) { await updateDoc(doc(db,'posts',editingId), data); }
+    else { data.createdAt = serverTimestamp(); await addDoc(collection(db,'posts'), data); }
+    status.textContent = '已儲存 ✓';
+    setTimeout(() => { status.textContent=''; showPanel('posts'); loadPosts(); }, 1200);
+  } catch(e) { status.textContent = '儲存失敗'; alert('儲存失敗：'+e.message); }
+});
+
+// PREVIEW
+document.getElementById('togglePreview').addEventListener('click', () => {
+  const wrap = document.getElementById('previewWrap');
+  const content = document.getElementById('fContent').value;
+  if (wrap.classList.toggle('show')) {
+    document.getElementById('previewContent').innerHTML = content;
+    wrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+});
+
+// PANEL SWITCH
+window.showPanel = function(name, id) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  if (name === 'posts') {
+    document.getElementById('panelPosts').classList.add('active');
+    document.getElementById('tabPosts').classList.add('active');
+  } else {
+    editingId = id || null;
+    if (!id) { document.getElementById('fTitle').value=''; document.getElementById('fCategory').value=''; document.getElementById('fTags').value=''; document.getElementById('fCover').value=''; document.getElementById('fExcerpt').value=''; document.getElementById('fContent').value=''; document.getElementById('editorTitle').textContent='新增文章'; document.getElementById('previewWrap').classList.remove('show'); }
+    document.getElementById('panelEditor').classList.add('active');
+    document.getElementById('tabNew').classList.add('active');
+  }
+};
+</script>
+</body>
+</html>
