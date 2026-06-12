@@ -169,8 +169,8 @@ async function render() {
   try {
     const snap = await getDoc(doc(db,'posts',id));
     if (!snap.exists()) { document.getElementById('articleWrap').innerHTML = '<div style="padding:5rem 2rem;text-align:center;color:var(--ink-faint)">文章不存在</div>'; return; }
-    if (post.status === 'draft') { document.getElementById('articleWrap').innerHTML = '<div style="padding:5rem 2rem;text-align:center;color:var(--ink-faint)">這篇文章尚未發布。</div>'; return; }
     const post = { id: snap.id, ...snap.data() };
+    if (post.status === 'draft') { document.getElementById('articleWrap').innerHTML = '<div style="padding:5rem 2rem;text-align:center;color:var(--ink-faint)">這篇文章尚未發布。</div>'; return; }
     document.title = `${post.title} — 晴空萬里・言言善也`;
 
     // SEO meta description
