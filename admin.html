@@ -10,12 +10,11 @@
 :root {
   --ink: #1a1612; --ink-soft: #3e3830; --ink-faint: #8a817a;
   --paper: #f7f4ef; --warm: #c9a96e; --accent: #7a5c4a; --dim: #2a2420;
-  --border: rgba(74,68,64,0.12); --red: #c0392b;
+  --border: rgba(74,68,64,0.12); --red: #c0392b; --green: #27ae60;
 }
 html { font-size: 15px; }
 body { background: #f0ede7; color: var(--ink); font-family: 'Noto Sans TC', sans-serif; font-weight: 300; -webkit-font-smoothing: antialiased; }
 
-/* LOGIN */
 #loginScreen { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--dim); }
 .login-box { background: var(--paper); padding: 3rem; width: 360px; }
 .login-box h1 { font-family: 'Noto Serif TC', serif; font-weight: 300; font-size: 1.3rem; margin-bottom: 0.5rem; }
@@ -28,56 +27,69 @@ body { background: #f0ede7; color: var(--ink); font-family: 'Noto Sans TC', sans
 .btn-primary:hover { background: var(--accent); }
 .login-error { font-size: 0.75rem; color: var(--red); margin-top: 0.8rem; text-align: center; min-height: 1.2rem; }
 
-/* ADMIN SHELL */
 #adminShell { display: none; min-height: 100vh; }
 .admin-nav { background: var(--dim); padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 56px; position: sticky; top: 0; z-index: 100; }
 .admin-nav-logo { font-family: 'Noto Serif TC', serif; font-weight: 200; font-size: 1rem; color: rgba(240,235,227,0.7); text-decoration: none; }
 .admin-nav-logo span { color: var(--warm); }
-.admin-nav-right { display: flex; gap: 1rem; align-items: center; }
-.nav-tab { font-size: 0.72rem; letter-spacing: 0.12em; color: rgba(240,235,227,0.4); cursor: pointer; padding: 0.35rem 0.8rem; border: 1px solid transparent; transition: all 0.2s; background: none; font-family: inherit; }
+.admin-nav-right { display: flex; gap: 0.5rem; align-items: center; }
+.nav-tab { font-size: 0.72rem; letter-spacing: 0.1em; color: rgba(240,235,227,0.4); cursor: pointer; padding: 0.35rem 0.9rem; border: 1px solid transparent; transition: all 0.2s; background: none; font-family: inherit; white-space: nowrap; }
 .nav-tab:hover, .nav-tab.active { color: var(--warm); border-color: rgba(201,169,110,0.3); }
-.btn-logout { font-size: 0.7rem; letter-spacing: 0.12em; color: rgba(240,235,227,0.3); background: none; border: none; cursor: pointer; font-family: inherit; }
+.btn-logout { font-size: 0.7rem; letter-spacing: 0.12em; color: rgba(240,235,227,0.3); background: none; border: none; cursor: pointer; font-family: inherit; margin-left: 0.5rem; }
 .btn-logout:hover { color: rgba(240,235,227,0.7); }
 
 .admin-body { max-width: 1100px; margin: 0 auto; padding: 2.5rem 2rem; }
-
-/* PANELS */
 .panel { display: none; }
 .panel.active { display: block; }
 
-/* POST LIST */
+/* POSTS LIST */
 .panel-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; }
 .panel-head h2 { font-family: 'Noto Serif TC', serif; font-weight: 300; font-size: 1.2rem; }
+.panel-head-right { display: flex; gap: 0.8rem; align-items: center; }
+.filter-tabs { display: flex; gap: 0; }
+.filter-tab { font-size: 0.7rem; padding: 0.35rem 0.9rem; border: 1px solid var(--border); background: #fff; color: var(--ink-faint); cursor: pointer; font-family: inherit; transition: all 0.2s; }
+.filter-tab:first-child { border-right: none; }
+.filter-tab.active { background: var(--dim); color: #f0ebe3; border-color: var(--dim); }
 .btn-new { background: var(--dim); color: #f0ebe3; padding: 0.6rem 1.4rem; font-family: inherit; font-size: 0.75rem; letter-spacing: 0.12em; border: none; cursor: pointer; transition: background 0.2s; }
 .btn-new:hover { background: var(--accent); }
 
 .post-table { width: 100%; border-collapse: collapse; background: #fff; }
 .post-table th { font-size: 0.65rem; letter-spacing: 0.2em; color: var(--ink-faint); padding: 0.9rem 1.2rem; text-align: left; border-bottom: 1px solid var(--border); font-weight: 300; }
-.post-table td { padding: 1rem 1.2rem; border-bottom: 1px solid var(--border); font-size: 0.82rem; color: var(--ink-soft); vertical-align: middle; }
+.post-table td { padding: 0.9rem 1.2rem; border-bottom: 1px solid var(--border); font-size: 0.82rem; color: var(--ink-soft); vertical-align: middle; }
 .post-table tr:hover td { background: #faf8f4; }
-.post-table .title-cell { font-family: 'Noto Serif TC', serif; font-size: 0.9rem; color: var(--ink); max-width: 300px; }
-.post-table .cat-badge { font-size: 0.62rem; letter-spacing: 0.12em; color: var(--warm); }
-.tbl-actions { display: flex; gap: 0.5rem; }
-.btn-edit { font-size: 0.7rem; padding: 0.3rem 0.8rem; border: 1px solid var(--border); background: none; cursor: pointer; color: var(--ink-faint); font-family: inherit; transition: all 0.2s; }
+.post-table .title-cell { font-family: 'Noto Serif TC', serif; font-size: 0.9rem; color: var(--ink); max-width: 280px; }
+.post-table .title-cell .pinned-badge { font-size: 0.58rem; background: var(--warm); color: var(--dim); padding: 0.1rem 0.4rem; margin-left: 0.4rem; vertical-align: middle; }
+.cat-badge { font-size: 0.62rem; letter-spacing: 0.1em; color: var(--warm); }
+.status-badge { font-size: 0.62rem; padding: 0.2rem 0.6rem; border-radius: 2px; }
+.status-badge.published { background: rgba(39,174,96,0.12); color: var(--green); }
+.status-badge.draft { background: rgba(138,129,122,0.12); color: var(--ink-faint); }
+.tbl-actions { display: flex; gap: 0.4rem; }
+.btn-edit { font-size: 0.68rem; padding: 0.28rem 0.75rem; border: 1px solid var(--border); background: none; cursor: pointer; color: var(--ink-faint); font-family: inherit; transition: all 0.2s; }
 .btn-edit:hover { border-color: var(--warm); color: var(--accent); }
-.btn-del { font-size: 0.7rem; padding: 0.3rem 0.8rem; border: 1px solid transparent; background: none; cursor: pointer; color: rgba(192,57,43,0.5); font-family: inherit; transition: all 0.2s; }
+.btn-del { font-size: 0.68rem; padding: 0.28rem 0.75rem; border: 1px solid transparent; background: none; cursor: pointer; color: rgba(192,57,43,0.5); font-family: inherit; transition: all 0.2s; }
 .btn-del:hover { border-color: var(--red); color: var(--red); }
 .empty-table { text-align: center; padding: 4rem; color: var(--ink-faint); font-size: 0.85rem; }
 
 /* EDITOR */
 .editor-wrap { background: #fff; padding: 2.5rem; }
-.editor-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; padding-bottom: 1.2rem; border-bottom: 1px solid var(--border); }
+.editor-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; padding-bottom: 1.2rem; border-bottom: 1px solid var(--border); flex-wrap: wrap; gap: 1rem; }
 .editor-head h2 { font-family: 'Noto Serif TC', serif; font-weight: 300; font-size: 1.1rem; }
-.editor-actions { display: flex; gap: 0.8rem; }
-.btn-cancel { background: none; border: 1px solid var(--border); padding: 0.55rem 1.2rem; font-family: inherit; font-size: 0.75rem; letter-spacing: 0.1em; color: var(--ink-faint); cursor: pointer; }
+.editor-actions { display: flex; gap: 0.6rem; align-items: center; flex-wrap: wrap; }
+.btn-cancel { background: none; border: 1px solid var(--border); padding: 0.5rem 1.1rem; font-family: inherit; font-size: 0.72rem; letter-spacing: 0.1em; color: var(--ink-faint); cursor: pointer; }
 .btn-cancel:hover { border-color: var(--warm); color: var(--accent); }
-.btn-save { background: var(--warm); border: none; padding: 0.55rem 1.6rem; font-family: inherit; font-size: 0.75rem; letter-spacing: 0.12em; color: var(--dim); cursor: pointer; transition: background 0.2s; }
+.btn-draft { background: none; border: 1px solid var(--border); padding: 0.5rem 1.1rem; font-family: inherit; font-size: 0.72rem; letter-spacing: 0.1em; color: var(--ink-faint); cursor: pointer; }
+.btn-draft:hover { border-color: var(--ink-soft); color: var(--ink); }
+.btn-save { background: var(--warm); border: none; padding: 0.5rem 1.5rem; font-family: inherit; font-size: 0.72rem; letter-spacing: 0.12em; color: var(--dim); cursor: pointer; transition: background 0.2s; }
 .btn-save:hover { background: var(--accent); color: #f0ebe3; }
+.btn-preview { background: none; border: 1px solid var(--border); padding: 0.5rem 1.1rem; font-family: inherit; font-size: 0.72rem; letter-spacing: 0.1em; color: var(--ink-faint); cursor: pointer; }
+.btn-preview:hover { border-color: var(--warm); color: var(--accent); }
+.save-status { font-size: 0.72rem; color: var(--warm); min-width: 70px; text-align: right; }
+
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
 @media (max-width: 640px) { .form-row { grid-template-columns: 1fr; } }
 .form-group { display: flex; flex-direction: column; gap: 0.5rem; }
 .form-group.full { grid-column: 1 / -1; }
-.form-group label { font-size: 0.68rem; letter-spacing: 0.18em; color: var(--ink-faint); }
+.form-group label { font-size: 0.68rem; letter-spacing: 0.18em; color: var(--ink-faint); display: flex; align-items: center; gap: 0.5rem; }
+.label-badge { font-size: 0.58rem; background: rgba(201,169,110,0.15); color: var(--warm); padding: 0.1rem 0.45rem; letter-spacing: 0.1em; }
 .form-group input, .form-group select, .form-group textarea {
   padding: 0.75rem 1rem; border: 1px solid var(--border); background: #faf8f4;
   font-family: 'Noto Sans TC', sans-serif; font-size: 0.88rem; font-weight: 300; color: var(--ink);
@@ -85,11 +97,29 @@ body { background: #f0ede7; color: var(--ink); font-family: 'Noto Sans TC', sans
 }
 .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--warm); background: #fff; }
 .title-input { font-family: 'Noto Serif TC', serif !important; font-size: 1.1rem !important; }
-.content-area { min-height: 420px; font-size: 0.88rem !important; line-height: 1.9; }
-.editor-hint { font-size: 0.68rem; color: var(--ink-faint); margin-top: 0.4rem; line-height: 1.6; }
-.save-status { font-size: 0.72rem; color: var(--warm); min-width: 80px; text-align: right; }
+.content-area { min-height: 380px; font-size: 0.88rem !important; line-height: 1.9; resize: vertical; }
+.editor-hint { font-size: 0.67rem; color: var(--ink-faint); margin-top: 0.35rem; line-height: 1.65; }
 
-/* PREVIEW */
+/* Word count */
+.word-count { font-size: 0.68rem; color: var(--ink-faint); margin-top: 0.4rem; display: flex; gap: 1rem; }
+.word-count span { color: var(--accent); font-weight: 400; }
+
+/* Toggle row */
+.toggle-row { display: flex; gap: 2rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+.toggle-item { display: flex; align-items: center; gap: 0.7rem; }
+.toggle-item label { font-size: 0.75rem; color: var(--ink-soft); cursor: pointer; }
+.toggle { position: relative; width: 36px; height: 20px; }
+.toggle input { opacity: 0; width: 0; height: 0; }
+.toggle-slider { position: absolute; inset: 0; background: #d0ccc6; cursor: pointer; border-radius: 20px; transition: background 0.2s; }
+.toggle-slider::before { content: ''; position: absolute; height: 14px; width: 14px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: transform 0.2s; }
+.toggle input:checked + .toggle-slider { background: var(--warm); }
+.toggle input:checked + .toggle-slider::before { transform: translateX(16px); }
+
+/* YouTube preview */
+.yt-preview { margin-top: 0.6rem; }
+.yt-preview iframe { width: 100%; height: 120px; border: none; display: block; }
+
+/* Preview */
 .preview-wrap { margin-top: 2rem; padding: 2rem; background: var(--paper); border: 1px solid var(--border); display: none; }
 .preview-wrap.show { display: block; }
 .preview-label { font-size: 0.65rem; letter-spacing: 0.22em; color: var(--warm); margin-bottom: 1.2rem; }
@@ -98,59 +128,65 @@ body { background: #f0ede7; color: var(--ink); font-family: 'Noto Sans TC', sans
 .preview-content h3 { font-weight: 300; font-size: 0.98rem; color: var(--accent); margin: 1.8rem 0 0.7rem; }
 .preview-content p { margin-bottom: 1.4rem; }
 .preview-content blockquote { margin: 2rem 0; padding: 1.5rem 0 1.5rem 1.8rem; border-left: 1.5px solid var(--warm); color: var(--accent); white-space: pre-line; }
-.btn-preview { background: none; border: 1px solid var(--border); padding: 0.5rem 1.2rem; font-family: inherit; font-size: 0.72rem; letter-spacing: 0.12em; color: var(--ink-faint); cursor: pointer; margin-right: 0.5rem; }
-.btn-preview:hover { border-color: var(--warm); color: var(--accent); }
+
+/* SETTINGS PANEL */
+.settings-section { background: #fff; padding: 2rem 2.5rem; margin-bottom: 1.5rem; }
+.settings-section h3 { font-family: 'Noto Serif TC', serif; font-weight: 300; font-size: 1rem; margin-bottom: 1.5rem; padding-bottom: 0.8rem; border-bottom: 1px solid var(--border); color: var(--ink); }
+.settings-actions { display: flex; justify-content: flex-end; margin-top: 1.5rem; }
+.btn-settings-save { background: var(--warm); border: none; padding: 0.6rem 1.8rem; font-family: inherit; font-size: 0.75rem; letter-spacing: 0.12em; color: var(--dim); cursor: pointer; transition: background 0.2s; }
+.btn-settings-save:hover { background: var(--accent); color: #f0ebe3; }
+
+/* Avatar preview */
+.avatar-preview { width: 72px; height: 72px; border-radius: 50%; overflow: hidden; background: var(--dim); display: flex; align-items: center; justify-content: center; color: rgba(201,169,110,0.3); font-size: 0.6rem; margin-bottom: 0.8rem; }
+.avatar-preview img { width: 100%; height: 100%; object-fit: cover; }
 </style>
 </head>
 <body>
 
-<!-- LOGIN -->
 <div id="loginScreen">
   <div class="login-box">
     <h1>後台管理</h1>
     <p>晴空萬里・言言善也</p>
-    <div class="field">
-      <label>電子郵件</label>
-      <input type="email" id="loginEmail" placeholder="your@email.com">
-    </div>
-    <div class="field">
-      <label>密碼</label>
-      <input type="password" id="loginPassword" placeholder="••••••••">
-    </div>
+    <div class="field"><label>電子郵件</label><input type="email" id="loginEmail" placeholder="your@email.com"></div>
+    <div class="field"><label>密碼</label><input type="password" id="loginPassword" placeholder="••••••••"></div>
     <button class="btn-primary" id="loginBtn">登入</button>
     <div class="login-error" id="loginError"></div>
   </div>
 </div>
 
-<!-- ADMIN -->
 <div id="adminShell">
   <nav class="admin-nav">
     <a href="index.html" class="admin-nav-logo" target="_blank">晴空萬里<span>・</span>言言善也</a>
     <div class="admin-nav-right">
       <button class="nav-tab active" id="tabPosts" onclick="showPanel('posts')">文章列表</button>
       <button class="nav-tab" id="tabNew" onclick="showPanel('editor', null)">＋ 新增文章</button>
+      <button class="nav-tab" id="tabSettings" onclick="showPanel('settings')">網站設定</button>
       <button class="btn-logout" id="logoutBtn">登出</button>
     </div>
   </nav>
 
   <div class="admin-body">
-    <!-- POSTS PANEL -->
+
+    <!-- ── 文章列表 ── -->
     <div class="panel active" id="panelPosts">
       <div class="panel-head">
         <h2>所有文章</h2>
-        <button class="btn-new" onclick="showPanel('editor', null)">＋ 新增文章</button>
+        <div class="panel-head-right">
+          <div class="filter-tabs">
+            <button class="filter-tab active" data-filter="all">全部</button>
+            <button class="filter-tab" data-filter="published">已發布</button>
+            <button class="filter-tab" data-filter="draft">草稿</button>
+          </div>
+          <button class="btn-new" onclick="showPanel('editor', null)">＋ 新增文章</button>
+        </div>
       </div>
       <table class="post-table">
-        <thead>
-          <tr><th>標題</th><th>分類</th><th>發布日期</th><th>操作</th></tr>
-        </thead>
-        <tbody id="postTableBody">
-          <tr><td colspan="4" class="empty-table">載入中…</td></tr>
-        </tbody>
+        <thead><tr><th>標題</th><th>分類</th><th>狀態</th><th>發布日期</th><th>操作</th></tr></thead>
+        <tbody id="postTableBody"><tr><td colspan="5" class="empty-table">載入中…</td></tr></tbody>
       </table>
     </div>
 
-    <!-- EDITOR PANEL -->
+    <!-- ── 編輯器 ── -->
     <div class="panel" id="panelEditor">
       <div class="editor-wrap">
         <div class="editor-head">
@@ -159,48 +195,81 @@ body { background: #f0ede7; color: var(--ink); font-family: 'Noto Sans TC', sans
             <span class="save-status" id="saveStatus"></span>
             <button class="btn-preview" id="togglePreview">預覽</button>
             <button class="btn-cancel" onclick="showPanel('posts')">取消</button>
-            <button class="btn-save" id="saveBtn">儲存發布</button>
+            <button class="btn-draft" id="saveDraftBtn">存為草稿</button>
+            <button class="btn-save" id="saveBtn">發布文章</button>
           </div>
         </div>
 
+        <!-- 標題 -->
         <div class="form-row">
           <div class="form-group full">
             <label>文章標題</label>
             <input type="text" id="fTitle" class="title-input" placeholder="輸入標題…">
           </div>
         </div>
+
+        <!-- 分類 + 標籤 -->
         <div class="form-row">
           <div class="form-group">
             <label>分類</label>
             <select id="fCategory">
               <option value="">選擇分類</option>
-              <option>影劇心理學</option>
-              <option>生活與情緒</option>
-              <option>輔導現場</option>
-              <option>穿搭與自我</option>
-              <option>跑咖日記</option>
+              <option>影劇分析</option>
+              <option>生活與心理學</option>
             </select>
           </div>
           <div class="form-group">
-            <label>標籤（逗號分隔）</label>
+            <label>標籤 <span class="label-badge">逗號分隔</span></label>
             <input type="text" id="fTags" placeholder="心理學, 依附理論, 耀眼">
           </div>
         </div>
+
+        <!-- 置頂 + 封面 -->
+        <div class="toggle-row">
+          <div class="toggle-item">
+            <label class="toggle"><input type="checkbox" id="fPinned"><span class="toggle-slider"></span></label>
+            <label for="fPinned">置頂此文章（顯示在首頁最上方）</label>
+          </div>
+        </div>
+
         <div class="form-row">
           <div class="form-group full">
-            <label>封面圖片網址（建議使用 Imgur 上傳後貼入連結）</label>
+            <label>封面圖片網址 <span class="label-badge">Imgur</span></label>
             <input type="url" id="fCover" placeholder="https://i.imgur.com/xxxxx.jpg">
           </div>
         </div>
+
+        <!-- YouTube -->
         <div class="form-row">
           <div class="form-group full">
-            <label>摘要（顯示在文章卡片上）</label>
+            <label>YouTube OST 連結 <span class="label-badge">選填</span></label>
+            <input type="url" id="fYoutube" placeholder="https://youtu.be/xxxxxxxx">
+            <div class="yt-preview" id="ytPreview"></div>
+            <div class="editor-hint">貼入連結後自動預覽。播放器出現在文章正文上方。</div>
+          </div>
+        </div>
+
+        <!-- SEO -->
+        <div class="form-row">
+          <div class="form-group full">
+            <label>SEO 描述 <span class="label-badge">選填・Google 搜尋結果顯示</span></label>
+            <textarea id="fSeo" rows="2" placeholder="這篇文章在 Google 搜尋結果顯示的說明，建議 50–120 字…"></textarea>
+            <div class="editor-hint">不填則自動使用摘要。良好的 SEO 描述有助於提高點擊率。</div>
+          </div>
+        </div>
+
+        <!-- 摘要 -->
+        <div class="form-row">
+          <div class="form-group full">
+            <label>摘要 <span class="label-badge">首頁卡片顯示</span></label>
             <textarea id="fExcerpt" rows="2" placeholder="一句話描述這篇文章…"></textarea>
           </div>
         </div>
+
+        <!-- 內容 -->
         <div class="form-row">
           <div class="form-group full">
-            <label>文章內容（支援 HTML 標籤）</label>
+            <label>文章內容 <span class="label-badge">支援 HTML</span></label>
             <textarea id="fContent" class="content-area" rows="20" placeholder="在這裡撰寫文章內容…
 
 支援的 HTML 標籤：
@@ -215,7 +284,8 @@ body { background: #f0ede7; color: var(--ink); font-family: 'Noto Sans TC', sans
   &lt;span class=&quot;label&quot;&gt;心理學概念｜概念名稱&lt;/span&gt;
   &lt;p&gt;解說內容&lt;/p&gt;
 &lt;/div&gt;"></textarea>
-            <div class="editor-hint">封面圖片請先上傳至 imgur.com，再將連結貼入上方欄位。文章內圖片同理。</div>
+            <div class="word-count" id="wordCount"><span id="wcChars">0</span> 字・預計閱讀時間 <span id="wcMin">0</span> 分鐘</div>
+            <div class="editor-hint">封面與內文圖片請先上傳至 imgur.com，再將連結貼入。</div>
           </div>
         </div>
 
@@ -225,13 +295,76 @@ body { background: #f0ede7; color: var(--ink); font-family: 'Noto Sans TC', sans
         </div>
       </div>
     </div>
+
+    <!-- ── 網站設定 ── -->
+    <div class="panel" id="panelSettings">
+
+      <div class="settings-section">
+        <h3>網站基本資訊</h3>
+        <div class="form-row">
+          <div class="form-group full">
+            <label>網站名稱</label>
+            <input type="text" id="sSiteName" placeholder="晴空萬里・言言善也">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group full">
+            <label>網站副標語 <span class="label-badge">Hero 區塊小字</span></label>
+            <input type="text" id="sSiteTagline" placeholder="用白話說心理學的故事">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group full">
+            <label>網站 Hero 主標題</label>
+            <input type="text" id="sSiteHero" placeholder="心理學不是教科書，是你每天的生活">
+            <div class="editor-hint">主標題中第一個「，」前後會分別顯示，後半段文字會以金色強調。</div>
+          </div>
+        </div>
+        <div class="settings-actions">
+          <button class="btn-settings-save" id="saveSiteBtn">儲存網站資訊</button>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <h3>作者簡介</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label>作者名稱</label>
+            <input type="text" id="sAuthorName" placeholder="安小姐">
+          </div>
+          <div class="form-group">
+            <label>頭貼網址 <span class="label-badge">Imgur</span></label>
+            <input type="url" id="sAuthorAvatar" placeholder="https://i.imgur.com/xxxxx.jpg">
+          </div>
+        </div>
+        <div id="avatarPreviewWrap" style="margin-bottom:1rem;">
+          <div class="avatar-preview" id="avatarPreview">頭像</div>
+        </div>
+        <div class="form-row">
+          <div class="form-group full">
+            <label>一行介紹 <span class="label-badge">首頁側邊欄</span></label>
+            <input type="text" id="sAuthorOneliner" placeholder="心理學系畢業・曾擔任小學代理輔導老師">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group full">
+            <label>完整自我介紹</label>
+            <textarea id="sAuthorBio" rows="4" placeholder="關於我的更多介紹…（目前顯示在側邊欄，未來可用於關於頁面）"></textarea>
+          </div>
+        </div>
+        <div class="settings-actions">
+          <button class="btn-settings-save" id="saveAuthorBtn">儲存作者資訊</button>
+        </div>
+      </div>
+
+    </div>
   </div>
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, collection, getDocs, doc, getDoc, addDoc, updateDoc, deleteDoc, serverTimestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, collection, getDocs, doc, getDoc, setDoc, addDoc, updateDoc, deleteDoc, serverTimestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBfVUjvhYXFzeEEnlZagxH48cY3Qh0IrvA",
@@ -245,11 +378,62 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 let editingId = null;
+let currentFilter = 'all';
+let allPostsCache = [];
 
-// AUTH
+// ── 工具函式 ──
+function extractYouTubeId(url) {
+  if (!url) return null;
+  const patterns = [/youtu\.be\/([^?&]+)/, /youtube\.com\/watch\?v=([^&]+)/, /youtube\.com\/embed\/([^?&]+)/];
+  for (const p of patterns) { const m = url.match(p); if (m) return m[1]; }
+  return null;
+}
+
+function calcReadTime(content) {
+  const text = content.replace(/<[^>]+>/g, '');
+  const chars = text.length;
+  const mins = Math.max(1, Math.round(chars / 400));
+  return { chars, mins };
+}
+
+function formatDate(ts) {
+  if (!ts) return '—';
+  const d = ts.toDate ? ts.toDate() : new Date(ts);
+  return d.toLocaleDateString('zh-TW', { year: 'numeric', month: 'long', day: 'numeric' });
+}
+
+// ── YouTube 即時預覽 ──
+document.getElementById('fYoutube').addEventListener('input', function() {
+  const ytId = extractYouTubeId(this.value.trim());
+  document.getElementById('ytPreview').innerHTML = ytId
+    ? `<iframe src="https://www.youtube.com/embed/${ytId}?rel=0" allowfullscreen></iframe>` : '';
+});
+
+// ── 字數統計 ──
+document.getElementById('fContent').addEventListener('input', function() {
+  const { chars, mins } = calcReadTime(this.value);
+  document.getElementById('wcChars').textContent = chars.toLocaleString();
+  document.getElementById('wcMin').textContent = mins;
+});
+
+// ── 頭貼即時預覽 ──
+document.getElementById('sAuthorAvatar').addEventListener('input', function() {
+  const preview = document.getElementById('avatarPreview');
+  preview.innerHTML = this.value.trim()
+    ? `<img src="${this.value.trim()}" alt="頭像">` : '頭像';
+});
+
+// ── AUTH ──
 onAuthStateChanged(auth, user => {
-  if (user) { document.getElementById('loginScreen').style.display='none'; document.getElementById('adminShell').style.display='block'; loadPosts(); }
-  else { document.getElementById('loginScreen').style.display='flex'; document.getElementById('adminShell').style.display='none'; }
+  if (user) {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('adminShell').style.display = 'block';
+    loadPosts();
+    loadSettings();
+  } else {
+    document.getElementById('loginScreen').style.display = 'flex';
+    document.getElementById('adminShell').style.display = 'none';
+  }
 });
 
 document.getElementById('loginBtn').addEventListener('click', async () => {
@@ -260,95 +444,196 @@ document.getElementById('loginBtn').addEventListener('click', async () => {
   try { await signInWithEmailAndPassword(auth, email, pw); }
   catch(e) { err.textContent = '帳號或密碼錯誤，請再試一次。'; }
 });
-
-document.getElementById('loginPassword').addEventListener('keydown', e => { if (e.key==='Enter') document.getElementById('loginBtn').click(); });
+document.getElementById('loginPassword').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('loginBtn').click(); });
 document.getElementById('logoutBtn').addEventListener('click', () => signOut(auth));
 
-// POSTS
+// ── 文章列表 ──
 async function loadPosts() {
   const tbody = document.getElementById('postTableBody');
   try {
-    const q = query(collection(db,'posts'), orderBy('createdAt','desc'));
-    const snap = await getDocs(q);
-    if (snap.empty) { tbody.innerHTML = '<tr><td colspan="4" class="empty-table">還沒有文章，點右上角「新增文章」開始吧。</td></tr>'; return; }
-    tbody.innerHTML = snap.docs.map(d => {
-      const p = d.data();
-      const date = p.createdAt ? p.createdAt.toDate().toLocaleDateString('zh-TW') : '—';
-      return `<tr>
-        <td class="title-cell">${p.title||'（無標題）'}</td>
-        <td><span class="cat-badge">${p.category||'—'}</span></td>
-        <td>${date}</td>
-        <td><div class="tbl-actions">
-          <button class="btn-edit" onclick="editPost('${d.id}')">編輯</button>
-          <button class="btn-del" onclick="deletePost('${d.id}','${(p.title||'').replace(/'/g,"\\'")}')">刪除</button>
-        </div></td>
-      </tr>`;
-    }).join('');
-  } catch(e) { tbody.innerHTML = '<tr><td colspan="4" class="empty-table">載入失敗</td></tr>'; }
+    const snap = await getDocs(query(collection(db, 'posts'), orderBy('createdAt', 'desc')));
+    allPostsCache = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderTable(allPostsCache);
+  } catch(e) { tbody.innerHTML = '<tr><td colspan="5" class="empty-table">載入失敗</td></tr>'; }
 }
 
+function renderTable(posts) {
+  const tbody = document.getElementById('postTableBody');
+  const filtered = currentFilter === 'all' ? posts
+    : posts.filter(p => currentFilter === 'draft' ? p.status === 'draft' : p.status !== 'draft');
+  if (filtered.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="5" class="empty-table">${currentFilter === 'draft' ? '沒有草稿' : '還沒有文章，點右上角「新增文章」開始吧。'}</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = filtered.map(p => `
+    <tr>
+      <td class="title-cell">
+        ${p.pinned ? '<span class="pinned-badge">置頂</span> ' : ''}${p.title || '（無標題）'}
+      </td>
+      <td><span class="cat-badge">${p.category || '—'}</span></td>
+      <td><span class="status-badge ${p.status === 'draft' ? 'draft' : 'published'}">${p.status === 'draft' ? '草稿' : '已發布'}</span></td>
+      <td>${formatDate(p.createdAt)}</td>
+      <td><div class="tbl-actions">
+        <button class="btn-edit" onclick="editPost('${p.id}')">編輯</button>
+        <button class="btn-del" onclick="deletePost('${p.id}','${(p.title||'').replace(/'/g,"\\'")}')">刪除</button>
+      </div></td>
+    </tr>`).join('');
+}
+
+document.querySelectorAll('.filter-tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentFilter = btn.dataset.filter;
+    renderTable(allPostsCache);
+  });
+});
+
+// ── 編輯文章 ──
 window.editPost = async function(id) {
   editingId = id;
-  const snap = await getDoc(doc(db,'posts',id));
+  const snap = await getDoc(doc(db, 'posts', id));
   if (!snap.exists()) return;
   const p = snap.data();
-  document.getElementById('fTitle').value = p.title||'';
-  document.getElementById('fCategory').value = p.category||'';
-  document.getElementById('fTags').value = p.tags||'';
-  document.getElementById('fCover').value = p.coverImage||'';
-  document.getElementById('fExcerpt').value = p.excerpt||'';
-  document.getElementById('fContent').value = p.content||'';
+  document.getElementById('fTitle').value = p.title || '';
+  document.getElementById('fCategory').value = p.category || '';
+  document.getElementById('fTags').value = p.tags || '';
+  document.getElementById('fCover').value = p.coverImage || '';
+  document.getElementById('fYoutube').value = p.youtubeUrl || '';
+  document.getElementById('fSeo').value = p.seoDescription || '';
+  document.getElementById('fExcerpt').value = p.excerpt || '';
+  document.getElementById('fContent').value = p.content || '';
+  document.getElementById('fPinned').checked = p.pinned || false;
+  const ytId = extractYouTubeId(p.youtubeUrl || '');
+  document.getElementById('ytPreview').innerHTML = ytId
+    ? `<iframe src="https://www.youtube.com/embed/${ytId}?rel=0" allowfullscreen></iframe>` : '';
+  const { chars, mins } = calcReadTime(p.content || '');
+  document.getElementById('wcChars').textContent = chars.toLocaleString();
+  document.getElementById('wcMin').textContent = mins;
   document.getElementById('editorTitle').textContent = '編輯文章';
   showPanel('editor', id);
 };
 
 window.deletePost = async function(id, title) {
   if (!confirm(`確定要刪除「${title}」？此動作無法復原。`)) return;
-  await deleteDoc(doc(db,'posts',id));
+  await deleteDoc(doc(db, 'posts', id));
   loadPosts();
 };
 
-document.getElementById('saveBtn').addEventListener('click', async () => {
+// ── 儲存文章 ──
+async function savePost(status) {
   const title = document.getElementById('fTitle').value.trim();
   if (!title) { alert('請輸入文章標題'); return; }
-  const status = document.getElementById('saveStatus');
-  status.textContent = '儲存中…';
+  const statusEl = document.getElementById('saveStatus');
+  statusEl.textContent = '儲存中…';
+  const content = document.getElementById('fContent').value;
+  const { mins } = calcReadTime(content);
   const data = {
     title,
     category: document.getElementById('fCategory').value,
     tags: document.getElementById('fTags').value,
     coverImage: document.getElementById('fCover').value.trim(),
+    youtubeUrl: document.getElementById('fYoutube').value.trim(),
+    seoDescription: document.getElementById('fSeo').value.trim(),
     excerpt: document.getElementById('fExcerpt').value.trim(),
-    content: document.getElementById('fContent').value,
+    content,
+    pinned: document.getElementById('fPinned').checked,
+    readTime: mins,
+    status,
   };
   try {
-    if (editingId) { await updateDoc(doc(db,'posts',editingId), data); }
-    else { data.createdAt = serverTimestamp(); await addDoc(collection(db,'posts'), data); }
-    status.textContent = '已儲存 ✓';
-    setTimeout(() => { status.textContent=''; showPanel('posts'); loadPosts(); }, 1200);
-  } catch(e) { status.textContent = '儲存失敗'; alert('儲存失敗：'+e.message); }
-});
+    if (editingId) { await updateDoc(doc(db, 'posts', editingId), data); }
+    else { data.createdAt = serverTimestamp(); await addDoc(collection(db, 'posts'), data); }
+    statusEl.textContent = status === 'draft' ? '草稿已儲存 ✓' : '已發布 ✓';
+    setTimeout(() => { statusEl.textContent = ''; showPanel('posts'); loadPosts(); }, 1200);
+  } catch(e) { statusEl.textContent = '儲存失敗'; alert('儲存失敗：' + e.message); }
+}
 
-// PREVIEW
+document.getElementById('saveBtn').addEventListener('click', () => savePost('published'));
+document.getElementById('saveDraftBtn').addEventListener('click', () => savePost('draft'));
+
+// ── 預覽 ──
 document.getElementById('togglePreview').addEventListener('click', () => {
   const wrap = document.getElementById('previewWrap');
-  const content = document.getElementById('fContent').value;
   if (wrap.classList.toggle('show')) {
-    document.getElementById('previewContent').innerHTML = content;
+    document.getElementById('previewContent').innerHTML = document.getElementById('fContent').value;
     wrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 });
 
-// PANEL SWITCH
+// ── 網站設定 ──
+async function loadSettings() {
+  try {
+    const siteSnap = await getDoc(doc(db, 'settings', 'site'));
+    if (siteSnap.exists()) {
+      const s = siteSnap.data();
+      document.getElementById('sSiteName').value = s.name || '';
+      document.getElementById('sSiteTagline').value = s.tagline || '';
+      document.getElementById('sSiteHero').value = s.hero || '';
+    }
+    const authorSnap = await getDoc(doc(db, 'settings', 'author'));
+    if (authorSnap.exists()) {
+      const a = authorSnap.data();
+      document.getElementById('sAuthorName').value = a.name || '';
+      document.getElementById('sAuthorAvatar').value = a.avatar || '';
+      document.getElementById('sAuthorOneliner').value = a.oneliner || '';
+      document.getElementById('sAuthorBio').value = a.bio || '';
+      document.getElementById('avatarPreview').innerHTML = a.avatar
+        ? `<img src="${a.avatar}" alt="頭像">` : '頭像';
+    }
+  } catch(e) { console.log('設定載入失敗', e); }
+}
+
+document.getElementById('saveSiteBtn').addEventListener('click', async () => {
+  try {
+    await setDoc(doc(db, 'settings', 'site'), {
+      name: document.getElementById('sSiteName').value.trim(),
+      tagline: document.getElementById('sSiteTagline').value.trim(),
+      hero: document.getElementById('sSiteHero').value.trim(),
+    });
+    document.getElementById('saveSiteBtn').textContent = '已儲存 ✓';
+    setTimeout(() => { document.getElementById('saveSiteBtn').textContent = '儲存網站資訊'; }, 1500);
+  } catch(e) { alert('儲存失敗：' + e.message); }
+});
+
+document.getElementById('saveAuthorBtn').addEventListener('click', async () => {
+  try {
+    await setDoc(doc(db, 'settings', 'author'), {
+      name: document.getElementById('sAuthorName').value.trim(),
+      avatar: document.getElementById('sAuthorAvatar').value.trim(),
+      oneliner: document.getElementById('sAuthorOneliner').value.trim(),
+      bio: document.getElementById('sAuthorBio').value.trim(),
+    });
+    document.getElementById('saveAuthorBtn').textContent = '已儲存 ✓';
+    setTimeout(() => { document.getElementById('saveAuthorBtn').textContent = '儲存作者資訊'; }, 1500);
+  } catch(e) { alert('儲存失敗：' + e.message); }
+});
+
+// ── 面板切換 ──
 window.showPanel = function(name, id) {
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
   if (name === 'posts') {
     document.getElementById('panelPosts').classList.add('active');
     document.getElementById('tabPosts').classList.add('active');
+  } else if (name === 'settings') {
+    document.getElementById('panelSettings').classList.add('active');
+    document.getElementById('tabSettings').classList.add('active');
   } else {
     editingId = id || null;
-    if (!id) { document.getElementById('fTitle').value=''; document.getElementById('fCategory').value=''; document.getElementById('fTags').value=''; document.getElementById('fCover').value=''; document.getElementById('fExcerpt').value=''; document.getElementById('fContent').value=''; document.getElementById('editorTitle').textContent='新增文章'; document.getElementById('previewWrap').classList.remove('show'); }
+    if (!id) {
+      ['fTitle','fCategory','fTags','fCover','fYoutube','fSeo','fExcerpt','fContent'].forEach(i => {
+        const el = document.getElementById(i);
+        if (el.tagName === 'SELECT') el.value = '';
+        else el.value = '';
+      });
+      document.getElementById('fPinned').checked = false;
+      document.getElementById('ytPreview').innerHTML = '';
+      document.getElementById('wcChars').textContent = '0';
+      document.getElementById('wcMin').textContent = '0';
+      document.getElementById('editorTitle').textContent = '新增文章';
+      document.getElementById('previewWrap').classList.remove('show');
+    }
     document.getElementById('panelEditor').classList.add('active');
     document.getElementById('tabNew').classList.add('active');
   }
