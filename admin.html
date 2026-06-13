@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>後台管理 — 晴空萬里</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@200;300;400&family=Noto+Sans+TC:wght@200;300;400&display=swap" rel="stylesheet">
+<link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
@@ -15,6 +16,7 @@
 html { font-size: 15px; }
 body { background: #f0ede7; color: var(--ink); font-family: 'Noto Sans TC', sans-serif; font-weight: 300; -webkit-font-smoothing: antialiased; }
 
+/* LOGIN */
 #loginScreen { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--dim); }
 .login-box { background: var(--paper); padding: 3rem; width: 360px; }
 .login-box h1 { font-family: 'Noto Serif TC', serif; font-weight: 300; font-size: 1.3rem; margin-bottom: 0.5rem; }
@@ -27,27 +29,28 @@ body { background: #f0ede7; color: var(--ink); font-family: 'Noto Sans TC', sans
 .btn-primary:hover { background: var(--accent); }
 .login-error { font-size: 0.75rem; color: var(--red); margin-top: 0.8rem; text-align: center; min-height: 1.2rem; }
 
+/* SHELL */
 #adminShell { display: none; min-height: 100vh; }
-.admin-nav { background: var(--dim); padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 56px; position: sticky; top: 0; z-index: 100; }
+.admin-nav { background: var(--dim); padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 56px; position: sticky; top: 0; z-index: 200; }
 .admin-nav-logo { font-family: 'Noto Serif TC', serif; font-weight: 200; font-size: 1rem; color: rgba(240,235,227,0.7); text-decoration: none; }
 .admin-nav-logo span { color: var(--warm); }
 .admin-nav-right { display: flex; gap: 0.5rem; align-items: center; }
 .nav-tab { font-size: 0.72rem; letter-spacing: 0.1em; color: rgba(240,235,227,0.4); cursor: pointer; padding: 0.35rem 0.9rem; border: 1px solid transparent; transition: all 0.2s; background: none; font-family: inherit; white-space: nowrap; }
 .nav-tab:hover, .nav-tab.active { color: var(--warm); border-color: rgba(201,169,110,0.3); }
-.btn-logout { font-size: 0.7rem; letter-spacing: 0.12em; color: rgba(240,235,227,0.3); background: none; border: none; cursor: pointer; font-family: inherit; margin-left: 0.5rem; }
+.btn-logout { font-size: 0.7rem; color: rgba(240,235,227,0.3); background: none; border: none; cursor: pointer; font-family: inherit; margin-left: 0.5rem; }
 .btn-logout:hover { color: rgba(240,235,227,0.7); }
 
 .admin-body { max-width: 1100px; margin: 0 auto; padding: 2.5rem 2rem; }
 .panel { display: none; }
 .panel.active { display: block; }
 
-/* POSTS LIST */
-.panel-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; }
+/* POST LIST */
+.panel-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
 .panel-head h2 { font-family: 'Noto Serif TC', serif; font-weight: 300; font-size: 1.2rem; }
-.panel-head-right { display: flex; gap: 0.8rem; align-items: center; }
-.filter-tabs { display: flex; gap: 0; }
+.panel-head-right { display: flex; gap: 0.8rem; align-items: center; flex-wrap: wrap; }
+.filter-tabs { display: flex; }
 .filter-tab { font-size: 0.7rem; padding: 0.35rem 0.9rem; border: 1px solid var(--border); background: #fff; color: var(--ink-faint); cursor: pointer; font-family: inherit; transition: all 0.2s; }
-.filter-tab:first-child { border-right: none; }
+.filter-tab:not(:last-child) { border-right: none; }
 .filter-tab.active { background: var(--dim); color: #f0ebe3; border-color: var(--dim); }
 .btn-new { background: var(--dim); color: #f0ebe3; padding: 0.6rem 1.4rem; font-family: inherit; font-size: 0.75rem; letter-spacing: 0.12em; border: none; cursor: pointer; transition: background 0.2s; }
 .btn-new:hover { background: var(--accent); }
@@ -56,40 +59,41 @@ body { background: #f0ede7; color: var(--ink); font-family: 'Noto Sans TC', sans
 .post-table th { font-size: 0.65rem; letter-spacing: 0.2em; color: var(--ink-faint); padding: 0.9rem 1.2rem; text-align: left; border-bottom: 1px solid var(--border); font-weight: 300; }
 .post-table td { padding: 0.9rem 1.2rem; border-bottom: 1px solid var(--border); font-size: 0.82rem; color: var(--ink-soft); vertical-align: middle; }
 .post-table tr:hover td { background: #faf8f4; }
-.post-table .title-cell { font-family: 'Noto Serif TC', serif; font-size: 0.9rem; color: var(--ink); max-width: 280px; }
-.post-table .title-cell .pinned-badge { font-size: 0.58rem; background: var(--warm); color: var(--dim); padding: 0.1rem 0.4rem; margin-left: 0.4rem; vertical-align: middle; }
+.title-cell { font-family: 'Noto Serif TC', serif; font-size: 0.9rem; color: var(--ink); max-width: 280px; }
+.pinned-badge { font-size: 0.58rem; background: var(--warm); color: var(--dim); padding: 0.1rem 0.4rem; margin-left: 0.4rem; }
 .cat-badge { font-size: 0.62rem; letter-spacing: 0.1em; color: var(--warm); }
-.status-badge { font-size: 0.62rem; padding: 0.2rem 0.6rem; border-radius: 2px; }
+.status-badge { font-size: 0.62rem; padding: 0.2rem 0.6rem; }
 .status-badge.published { background: rgba(39,174,96,0.12); color: var(--green); }
 .status-badge.draft { background: rgba(138,129,122,0.12); color: var(--ink-faint); }
 .tbl-actions { display: flex; gap: 0.4rem; }
-.btn-edit { font-size: 0.68rem; padding: 0.28rem 0.75rem; border: 1px solid var(--border); background: none; cursor: pointer; color: var(--ink-faint); font-family: inherit; transition: all 0.2s; }
+.btn-edit, .btn-del { font-size: 0.68rem; padding: 0.28rem 0.75rem; border: 1px solid var(--border); background: none; cursor: pointer; font-family: inherit; transition: all 0.2s; }
+.btn-edit { color: var(--ink-faint); }
 .btn-edit:hover { border-color: var(--warm); color: var(--accent); }
-.btn-del { font-size: 0.68rem; padding: 0.28rem 0.75rem; border: 1px solid transparent; background: none; cursor: pointer; color: rgba(192,57,43,0.5); font-family: inherit; transition: all 0.2s; }
+.btn-del { border-color: transparent; color: rgba(192,57,43,0.5); }
 .btn-del:hover { border-color: var(--red); color: var(--red); }
 .empty-table { text-align: center; padding: 4rem; color: var(--ink-faint); font-size: 0.85rem; }
 
-/* EDITOR */
+/* EDITOR PANEL */
 .editor-wrap { background: #fff; padding: 2.5rem; }
 .editor-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; padding-bottom: 1.2rem; border-bottom: 1px solid var(--border); flex-wrap: wrap; gap: 1rem; }
 .editor-head h2 { font-family: 'Noto Serif TC', serif; font-weight: 300; font-size: 1.1rem; }
 .editor-actions { display: flex; gap: 0.6rem; align-items: center; flex-wrap: wrap; }
-.btn-cancel { background: none; border: 1px solid var(--border); padding: 0.5rem 1.1rem; font-family: inherit; font-size: 0.72rem; letter-spacing: 0.1em; color: var(--ink-faint); cursor: pointer; }
-.btn-cancel:hover { border-color: var(--warm); color: var(--accent); }
-.btn-draft { background: none; border: 1px solid var(--border); padding: 0.5rem 1.1rem; font-family: inherit; font-size: 0.72rem; letter-spacing: 0.1em; color: var(--ink-faint); cursor: pointer; }
-.btn-draft:hover { border-color: var(--ink-soft); color: var(--ink); }
-.btn-save { background: var(--warm); border: none; padding: 0.5rem 1.5rem; font-family: inherit; font-size: 0.72rem; letter-spacing: 0.12em; color: var(--dim); cursor: pointer; transition: background 0.2s; }
-.btn-save:hover { background: var(--accent); color: #f0ebe3; }
-.btn-preview { background: none; border: 1px solid var(--border); padding: 0.5rem 1.1rem; font-family: inherit; font-size: 0.72rem; letter-spacing: 0.1em; color: var(--ink-faint); cursor: pointer; }
-.btn-preview:hover { border-color: var(--warm); color: var(--accent); }
 .save-status { font-size: 0.72rem; color: var(--warm); min-width: 70px; text-align: right; }
+.btn-cancel, .btn-draft, .btn-save, .btn-preview-toggle {
+  font-family: inherit; cursor: pointer; font-size: 0.72rem; letter-spacing: 0.1em; padding: 0.5rem 1.1rem; border: 1px solid var(--border); background: none; color: var(--ink-faint); transition: all 0.2s;
+}
+.btn-cancel:hover, .btn-preview-toggle:hover { border-color: var(--warm); color: var(--accent); }
+.btn-draft:hover { border-color: var(--ink-soft); color: var(--ink); }
+.btn-save { background: var(--warm); border-color: var(--warm); color: var(--dim); }
+.btn-save:hover { background: var(--accent); border-color: var(--accent); color: #f0ebe3; }
 
+/* FORM */
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
 @media (max-width: 640px) { .form-row { grid-template-columns: 1fr; } }
 .form-group { display: flex; flex-direction: column; gap: 0.5rem; }
 .form-group.full { grid-column: 1 / -1; }
 .form-group label { font-size: 0.68rem; letter-spacing: 0.18em; color: var(--ink-faint); display: flex; align-items: center; gap: 0.5rem; }
-.label-badge { font-size: 0.58rem; background: rgba(201,169,110,0.15); color: var(--warm); padding: 0.1rem 0.45rem; letter-spacing: 0.1em; }
+.label-badge { font-size: 0.58rem; background: rgba(201,169,110,0.15); color: var(--warm); padding: 0.1rem 0.45rem; }
 .form-group input, .form-group select, .form-group textarea {
   padding: 0.75rem 1rem; border: 1px solid var(--border); background: #faf8f4;
   font-family: 'Noto Sans TC', sans-serif; font-size: 0.88rem; font-weight: 300; color: var(--ink);
@@ -97,14 +101,9 @@ body { background: #f0ede7; color: var(--ink); font-family: 'Noto Sans TC', sans
 }
 .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--warm); background: #fff; }
 .title-input { font-family: 'Noto Serif TC', serif !important; font-size: 1.1rem !important; }
-.content-area { min-height: 380px; font-size: 0.88rem !important; line-height: 1.9; resize: vertical; }
 .editor-hint { font-size: 0.67rem; color: var(--ink-faint); margin-top: 0.35rem; line-height: 1.65; }
 
-/* Word count */
-.word-count { font-size: 0.68rem; color: var(--ink-faint); margin-top: 0.4rem; display: flex; gap: 1rem; }
-.word-count span { color: var(--accent); font-weight: 400; }
-
-/* Toggle row */
+/* TOGGLE ROW */
 .toggle-row { display: flex; gap: 2rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
 .toggle-item { display: flex; align-items: center; gap: 0.7rem; }
 .toggle-item label { font-size: 0.75rem; color: var(--ink-soft); cursor: pointer; }
@@ -115,34 +114,115 @@ body { background: #f0ede7; color: var(--ink); font-family: 'Noto Sans TC', sans
 .toggle input:checked + .toggle-slider { background: var(--warm); }
 .toggle input:checked + .toggle-slider::before { transform: translateX(16px); }
 
+/* WORD COUNT */
+.word-count { font-size: 0.68rem; color: var(--ink-faint); margin-top: 0.5rem; display: flex; gap: 1rem; }
+.word-count span { color: var(--accent); font-weight: 400; }
+
 /* YouTube preview */
 .yt-preview { margin-top: 0.6rem; }
 .yt-preview iframe { width: 100%; height: 120px; border: none; display: block; }
 
-/* Preview */
-.preview-wrap { margin-top: 2rem; padding: 2rem; background: var(--paper); border: 1px solid var(--border); display: none; }
+/* ── QUILL EDITOR ── */
+.quill-wrap { border: 1px solid var(--border); background: #fff; margin-bottom: 0; }
+
+/* Toolbar override — match site aesthetic */
+.ql-toolbar.ql-snow {
+  border: none;
+  border-bottom: 1px solid var(--border);
+  background: #faf8f4;
+  padding: 0.6rem 0.8rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.2rem;
+  align-items: center;
+  position: sticky;
+  top: 56px;
+  z-index: 100;
+}
+.ql-container.ql-snow {
+  border: none;
+  font-family: 'Noto Serif TC', serif;
+  font-size: 1rem;
+  line-height: 2;
+  min-height: 420px;
+}
+.ql-editor {
+  padding: 1.5rem 2rem;
+  min-height: 420px;
+  color: var(--ink-soft);
+}
+.ql-editor.ql-blank::before {
+  color: rgba(138,129,122,0.5);
+  font-style: normal;
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 0.88rem;
+}
+.ql-editor h1 { font-family: 'Noto Serif TC', serif; font-weight: 300; font-size: 1.6rem; line-height: 1.5; color: var(--ink); margin-bottom: 0.5rem; }
+.ql-editor h2 { font-family: 'Noto Serif TC', serif; font-weight: 300; font-size: 1.2rem; line-height: 1.6; color: var(--ink); border-bottom: 1px solid var(--border); padding-bottom: 0.4rem; margin: 1.5rem 0 0.8rem; }
+.ql-editor h3 { font-family: 'Noto Serif TC', serif; font-weight: 300; font-size: 1rem; color: var(--accent); margin: 1.2rem 0 0.6rem; }
+.ql-editor p { margin-bottom: 0.8rem; }
+.ql-editor blockquote { border-left: 2px solid var(--warm); padding: 0.8rem 0 0.8rem 1.5rem; color: var(--accent); margin: 1.5rem 0; font-size: 1.05rem; }
+.ql-editor img { max-width: 100%; height: auto; display: block; margin: 1rem 0; }
+.ql-snow .ql-picker { color: var(--ink-soft); }
+.ql-snow .ql-stroke { stroke: var(--ink-soft); }
+.ql-snow .ql-fill { fill: var(--ink-soft); }
+.ql-snow.ql-toolbar button:hover .ql-stroke,
+.ql-snow .ql-toolbar button:hover .ql-stroke { stroke: var(--accent); }
+.ql-snow.ql-toolbar button.ql-active .ql-stroke { stroke: var(--warm); }
+.ql-snow.ql-toolbar button.ql-active .ql-fill { fill: var(--warm); }
+
+/* Image resize handle via CSS */
+.ql-editor img.resizable { cursor: nwse-resize; }
+
+/* Toolbar divider */
+.ql-toolbar .ql-formats { margin-right: 0.5rem !important; padding-right: 0.5rem; border-right: 1px solid var(--border); }
+.ql-toolbar .ql-formats:last-child { border-right: none; }
+
+/* PREVIEW */
+.preview-wrap { display: none; margin-top: 2rem; padding: 2rem 2.5rem; background: var(--paper); border: 1px solid var(--border); }
 .preview-wrap.show { display: block; }
-.preview-label { font-size: 0.65rem; letter-spacing: 0.22em; color: var(--warm); margin-bottom: 1.2rem; }
+.preview-label { font-size: 0.65rem; letter-spacing: 0.22em; color: var(--warm); margin-bottom: 1.5rem; }
 .preview-content { font-family: 'Noto Serif TC', serif; font-weight: 300; font-size: 1rem; line-height: 2.1; color: var(--ink-soft); }
-.preview-content h2 { font-weight: 300; font-size: 1.1rem; color: var(--ink); margin: 2rem 0 0.9rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border); }
+.preview-content h1 { font-weight: 200; font-size: 1.8rem; color: var(--ink); margin-bottom: 1rem; }
+.preview-content h2 { font-weight: 300; font-size: 1.15rem; color: var(--ink); margin: 2.5rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border); }
 .preview-content h3 { font-weight: 300; font-size: 0.98rem; color: var(--accent); margin: 1.8rem 0 0.7rem; }
 .preview-content p { margin-bottom: 1.4rem; }
-.preview-content blockquote { margin: 2rem 0; padding: 1.5rem 0 1.5rem 1.8rem; border-left: 1.5px solid var(--warm); color: var(--accent); white-space: pre-line; }
+.preview-content blockquote { margin: 2rem 0; padding: 1.5rem 0 1.5rem 1.8rem; border-left: 1.5px solid var(--warm); color: var(--accent); }
+.preview-content img { max-width: 100%; margin: 1.5rem 0; display: block; }
+.preview-content .concept-box { background: rgba(201,169,110,0.07); padding: 1.5rem 1.8rem; margin: 2rem 0; border-top: 1px solid rgba(201,169,110,0.25); }
 
-/* SETTINGS PANEL */
+/* IMAGE INSERT MODAL */
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(26,22,18,0.6); z-index: 500; align-items: center; justify-content: center; }
+.modal-overlay.show { display: flex; }
+.modal-box { background: var(--paper); padding: 2rem; width: 440px; max-width: 90vw; }
+.modal-box h3 { font-family: 'Noto Serif TC', serif; font-weight: 300; font-size: 1rem; margin-bottom: 1.2rem; }
+.modal-box input { width: 100%; padding: 0.7rem 1rem; border: 1px solid var(--border); background: #fff; font-family: inherit; font-size: 0.88rem; color: var(--ink); outline: none; margin-bottom: 0.5rem; }
+.modal-box input:focus { border-color: var(--warm); }
+.modal-hint { font-size: 0.67rem; color: var(--ink-faint); margin-bottom: 1.2rem; line-height: 1.6; }
+.modal-size { display: flex; gap: 0.8rem; align-items: center; margin-bottom: 1.2rem; }
+.modal-size label { font-size: 0.72rem; color: var(--ink-faint); white-space: nowrap; }
+.modal-size input[type="range"] { flex: 1; accent-color: var(--warm); }
+.modal-size span { font-size: 0.72rem; color: var(--accent); min-width: 40px; }
+.modal-actions { display: flex; gap: 0.8rem; justify-content: flex-end; }
+.modal-btn { font-family: inherit; font-size: 0.75rem; padding: 0.5rem 1.2rem; border: 1px solid var(--border); background: none; cursor: pointer; color: var(--ink-faint); transition: all 0.2s; }
+.modal-btn.primary { background: var(--warm); border-color: var(--warm); color: var(--dim); }
+.modal-btn:hover { border-color: var(--warm); color: var(--accent); }
+.modal-btn.primary:hover { background: var(--accent); border-color: var(--accent); color: #f0ebe3; }
+.modal-preview { max-width: 100%; max-height: 140px; object-fit: contain; display: none; margin-bottom: 1rem; border: 1px solid var(--border); }
+
+/* SETTINGS */
 .settings-section { background: #fff; padding: 2rem 2.5rem; margin-bottom: 1.5rem; }
-.settings-section h3 { font-family: 'Noto Serif TC', serif; font-weight: 300; font-size: 1rem; margin-bottom: 1.5rem; padding-bottom: 0.8rem; border-bottom: 1px solid var(--border); color: var(--ink); }
+.settings-section h3 { font-family: 'Noto Serif TC', serif; font-weight: 300; font-size: 1rem; margin-bottom: 1.5rem; padding-bottom: 0.8rem; border-bottom: 1px solid var(--border); }
 .settings-actions { display: flex; justify-content: flex-end; margin-top: 1.5rem; }
 .btn-settings-save { background: var(--warm); border: none; padding: 0.6rem 1.8rem; font-family: inherit; font-size: 0.75rem; letter-spacing: 0.12em; color: var(--dim); cursor: pointer; transition: background 0.2s; }
 .btn-settings-save:hover { background: var(--accent); color: #f0ebe3; }
-
-/* Avatar preview */
 .avatar-preview { width: 72px; height: 72px; border-radius: 50%; overflow: hidden; background: var(--dim); display: flex; align-items: center; justify-content: center; color: rgba(201,169,110,0.3); font-size: 0.6rem; margin-bottom: 0.8rem; }
 .avatar-preview img { width: 100%; height: 100%; object-fit: cover; }
 </style>
 </head>
 <body>
 
+<!-- LOGIN -->
 <div id="loginScreen">
   <div class="login-box">
     <h1>後台管理</h1>
@@ -154,12 +234,32 @@ body { background: #f0ede7; color: var(--ink); font-family: 'Noto Sans TC', sans
   </div>
 </div>
 
+<!-- IMAGE INSERT MODAL -->
+<div class="modal-overlay" id="imgModal">
+  <div class="modal-box">
+    <h3>插入圖片</h3>
+    <input type="url" id="imgUrl" placeholder="https://i.postimg.cc/xxxxx/image.jpg">
+    <div class="modal-hint">將圖片上傳至 postimages.org 後，複製 Direct link 貼入上方</div>
+    <img class="modal-preview" id="imgPreview" alt="預覽">
+    <div class="modal-size">
+      <label>圖片寬度</label>
+      <input type="range" id="imgWidth" min="20" max="100" value="100">
+      <span id="imgWidthVal">100%</span>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-btn" id="imgModalCancel">取消</button>
+      <button class="modal-btn primary" id="imgModalInsert">插入圖片</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN -->
 <div id="adminShell">
   <nav class="admin-nav">
     <a href="index.html" class="admin-nav-logo" target="_blank">晴空萬里<span>・</span>言言善也</a>
     <div class="admin-nav-right">
       <button class="nav-tab active" id="tabPosts" onclick="showPanel('posts')">文章列表</button>
-      <button class="nav-tab" id="tabNew" onclick="showPanel('editor', null)">＋ 新增文章</button>
+      <button class="nav-tab" id="tabNew" onclick="showPanel('editor',null)">＋ 新增文章</button>
       <button class="nav-tab" id="tabSettings" onclick="showPanel('settings')">網站設定</button>
       <button class="btn-logout" id="logoutBtn">登出</button>
     </div>
@@ -167,7 +267,7 @@ body { background: #f0ede7; color: var(--ink); font-family: 'Noto Sans TC', sans
 
   <div class="admin-body">
 
-    <!-- ── 文章列表 ── -->
+    <!-- 文章列表 -->
     <div class="panel active" id="panelPosts">
       <div class="panel-head">
         <h2>所有文章</h2>
@@ -177,7 +277,7 @@ body { background: #f0ede7; color: var(--ink); font-family: 'Noto Sans TC', sans
             <button class="filter-tab" data-filter="published">已發布</button>
             <button class="filter-tab" data-filter="draft">草稿</button>
           </div>
-          <button class="btn-new" onclick="showPanel('editor', null)">＋ 新增文章</button>
+          <button class="btn-new" onclick="showPanel('editor',null)">＋ 新增文章</button>
         </div>
       </div>
       <table class="post-table">
@@ -186,14 +286,14 @@ body { background: #f0ede7; color: var(--ink); font-family: 'Noto Sans TC', sans
       </table>
     </div>
 
-    <!-- ── 編輯器 ── -->
+    <!-- 編輯器 -->
     <div class="panel" id="panelEditor">
       <div class="editor-wrap">
         <div class="editor-head">
           <h2 id="editorTitle">新增文章</h2>
           <div class="editor-actions">
             <span class="save-status" id="saveStatus"></span>
-            <button class="btn-preview" id="togglePreview">預覽</button>
+            <button class="btn-preview-toggle" id="togglePreview">預覽</button>
             <button class="btn-cancel" onclick="showPanel('posts')">取消</button>
             <button class="btn-draft" id="saveDraftBtn">存為草稿</button>
             <button class="btn-save" id="saveBtn">發布文章</button>
@@ -224,18 +324,19 @@ body { background: #f0ede7; color: var(--ink); font-family: 'Noto Sans TC', sans
           </div>
         </div>
 
-        <!-- 置頂 + 封面 -->
+        <!-- 置頂 -->
         <div class="toggle-row">
           <div class="toggle-item">
             <label class="toggle"><input type="checkbox" id="fPinned"><span class="toggle-slider"></span></label>
-            <label for="fPinned">置頂此文章（顯示在首頁最上方）</label>
+            <label for="fPinned">置頂此文章</label>
           </div>
         </div>
 
+        <!-- 封面 -->
         <div class="form-row">
           <div class="form-group full">
-            <label>封面圖片網址 <span class="label-badge">Imgur</span></label>
-            <input type="url" id="fCover" placeholder="https://i.imgur.com/xxxxx.jpg">
+            <label>封面圖片網址 <span class="label-badge">postimages Direct link</span></label>
+            <input type="url" id="fCover" placeholder="https://i.postimg.cc/xxxxx/image.jpg">
           </div>
         </div>
 
@@ -245,16 +346,14 @@ body { background: #f0ede7; color: var(--ink); font-family: 'Noto Sans TC', sans
             <label>YouTube OST 連結 <span class="label-badge">選填</span></label>
             <input type="url" id="fYoutube" placeholder="https://youtu.be/xxxxxxxx">
             <div class="yt-preview" id="ytPreview"></div>
-            <div class="editor-hint">貼入連結後自動預覽。播放器出現在文章正文上方。</div>
           </div>
         </div>
 
         <!-- SEO -->
         <div class="form-row">
           <div class="form-group full">
-            <label>SEO 描述 <span class="label-badge">選填・Google 搜尋結果顯示</span></label>
-            <textarea id="fSeo" rows="2" placeholder="這篇文章在 Google 搜尋結果顯示的說明，建議 50–120 字…"></textarea>
-            <div class="editor-hint">不填則自動使用摘要。良好的 SEO 描述有助於提高點擊率。</div>
+            <label>SEO 描述 <span class="label-badge">Google 搜尋結果顯示・選填</span></label>
+            <textarea id="fSeo" rows="2" placeholder="建議 50–120 字，不填則自動使用摘要"></textarea>
           </div>
         </div>
 
@@ -266,29 +365,17 @@ body { background: #f0ede7; color: var(--ink); font-family: 'Noto Sans TC', sans
           </div>
         </div>
 
-        <!-- 內容 -->
-        <div class="form-row">
-          <div class="form-group full">
-            <label>文章內容 <span class="label-badge">支援 HTML</span></label>
-            <textarea id="fContent" class="content-area" rows="20" placeholder="在這裡撰寫文章內容…
-
-支援的 HTML 標籤：
-&lt;h2&gt;章節標題&lt;/h2&gt;
-&lt;h3&gt;小標題&lt;/h3&gt;
-&lt;p&gt;段落文字&lt;/p&gt;
-&lt;blockquote&gt;引言台詞&lt;/blockquote&gt;
-&lt;img src=&quot;圖片網址&quot;&gt;
-
-心理學概念框：
-&lt;div class=&quot;concept-box&quot;&gt;
-  &lt;span class=&quot;label&quot;&gt;心理學概念｜概念名稱&lt;/span&gt;
-  &lt;p&gt;解說內容&lt;/p&gt;
-&lt;/div&gt;"></textarea>
-            <div class="word-count" id="wordCount"><span id="wcChars">0</span> 字・預計閱讀時間 <span id="wcMin">0</span> 分鐘</div>
-            <div class="editor-hint">封面與內文圖片請先上傳至 imgur.com，再將連結貼入。</div>
+        <!-- 富文本編輯器 -->
+        <div class="form-group full" style="margin-bottom:1.5rem;">
+          <label>文章內容</label>
+          <div class="quill-wrap">
+            <div id="quillEditor"></div>
           </div>
+          <div class="word-count">字數：<span id="wcChars">0</span>・預計閱讀時間 <span id="wcMin">0</span> 分鐘</div>
+          <div class="editor-hint">點工具列上的圖片按鈕可插入圖片並調整大小。概念框、引言等格式請使用工具列的「引言」或「程式碼區塊」按鈕。</div>
         </div>
 
+        <!-- 預覽 -->
         <div class="preview-wrap" id="previewWrap">
           <div class="preview-label">文章預覽</div>
           <div class="preview-content" id="previewContent"></div>
@@ -296,71 +383,48 @@ body { background: #f0ede7; color: var(--ink); font-family: 'Noto Sans TC', sans
       </div>
     </div>
 
-    <!-- ── 網站設定 ── -->
+    <!-- 網站設定 -->
     <div class="panel" id="panelSettings">
-
       <div class="settings-section">
         <h3>網站基本資訊</h3>
         <div class="form-row">
-          <div class="form-group full">
-            <label>網站名稱</label>
-            <input type="text" id="sSiteName" placeholder="晴空萬里・言言善也">
-          </div>
+          <div class="form-group full"><label>網站名稱</label><input type="text" id="sSiteName" placeholder="晴空萬里・言言善也"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group full"><label>副標語 <span class="label-badge">Hero 小字</span></label><input type="text" id="sSiteTagline" placeholder="用白話說心理學的故事"></div>
         </div>
         <div class="form-row">
           <div class="form-group full">
-            <label>網站副標語 <span class="label-badge">Hero 區塊小字</span></label>
-            <input type="text" id="sSiteTagline" placeholder="用白話說心理學的故事">
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group full">
-            <label>網站 Hero 主標題</label>
+            <label>Hero 主標題</label>
             <input type="text" id="sSiteHero" placeholder="心理學不是教科書，是你每天的生活">
-            <div class="editor-hint">主標題中第一個「，」前後會分別顯示，後半段文字會以金色強調。</div>
+            <div class="editor-hint">第一個「，」後的文字會以金色強調顯示。</div>
           </div>
         </div>
-        <div class="settings-actions">
-          <button class="btn-settings-save" id="saveSiteBtn">儲存網站資訊</button>
-        </div>
+        <div class="settings-actions"><button class="btn-settings-save" id="saveSiteBtn">儲存網站資訊</button></div>
       </div>
-
       <div class="settings-section">
         <h3>作者簡介</h3>
         <div class="form-row">
-          <div class="form-group">
-            <label>作者名稱</label>
-            <input type="text" id="sAuthorName" placeholder="安小姐">
-          </div>
-          <div class="form-group">
-            <label>頭貼網址 <span class="label-badge">Imgur</span></label>
-            <input type="url" id="sAuthorAvatar" placeholder="https://i.imgur.com/xxxxx.jpg">
-          </div>
+          <div class="form-group"><label>作者名稱</label><input type="text" id="sAuthorName" placeholder="安小姐"></div>
+          <div class="form-group"><label>頭貼網址 <span class="label-badge">postimages Direct link</span></label><input type="url" id="sAuthorAvatar" placeholder="https://i.postimg.cc/xxxxx/avatar.jpg"></div>
         </div>
         <div id="avatarPreviewWrap" style="margin-bottom:1rem;">
           <div class="avatar-preview" id="avatarPreview">頭像</div>
         </div>
         <div class="form-row">
-          <div class="form-group full">
-            <label>一行介紹 <span class="label-badge">首頁側邊欄</span></label>
-            <input type="text" id="sAuthorOneliner" placeholder="心理學系畢業・曾擔任小學代理輔導老師">
-          </div>
+          <div class="form-group full"><label>一行介紹 <span class="label-badge">首頁側邊欄</span></label><input type="text" id="sAuthorOneliner" placeholder="心理學系畢業・曾擔任小學代理輔導老師"></div>
         </div>
         <div class="form-row">
-          <div class="form-group full">
-            <label>完整自我介紹</label>
-            <textarea id="sAuthorBio" rows="4" placeholder="關於我的更多介紹…（目前顯示在側邊欄，未來可用於關於頁面）"></textarea>
-          </div>
+          <div class="form-group full"><label>完整自我介紹</label><textarea id="sAuthorBio" rows="4" placeholder="關於我的更多介紹…"></textarea></div>
         </div>
-        <div class="settings-actions">
-          <button class="btn-settings-save" id="saveAuthorBtn">儲存作者資訊</button>
-        </div>
+        <div class="settings-actions"><button class="btn-settings-save" id="saveAuthorBtn">儲存作者資訊</button></div>
       </div>
-
     </div>
+
   </div>
 </div>
 
+<script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
@@ -380,6 +444,88 @@ const db = getFirestore(app);
 let editingId = null;
 let currentFilter = 'all';
 let allPostsCache = [];
+let quill = null;
+
+// ── 初始化 Quill ──
+function initQuill() {
+  if (quill) return;
+  quill = new Quill('#quillEditor', {
+    theme: 'snow',
+    placeholder: '在這裡開始撰寫文章…\n\n提示：\n• 使用工具列選擇標題、字體顏色、對齊方式\n• 點「引言」按鈕插入台詞引言\n• 點圖片按鈕插入圖片並調整大小',
+    modules: {
+      toolbar: {
+        container: [
+          [{ 'header': [1, 2, 3, false] }],
+          ['bold', 'italic', 'underline', 'strike'],
+          [{ 'color': [] }, { 'background': [] }],
+          [{ 'size': ['small', false, 'large', 'huge'] }],
+          [{ 'align': [] }],
+          ['blockquote', 'code-block'],
+          [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+          ['link', 'image'],
+          ['clean']
+        ],
+        handlers: { image: imageHandler }
+      }
+    }
+  });
+
+  quill.on('text-change', () => {
+    const text = quill.getText();
+    const chars = text.replace(/\s/g,'').length;
+    const mins = Math.max(1, Math.round(chars / 400));
+    document.getElementById('wcChars').textContent = chars.toLocaleString();
+    document.getElementById('wcMin').textContent = mins;
+  });
+}
+
+// ── 圖片插入（自訂 handler 打開 modal）──
+function imageHandler() {
+  document.getElementById('imgUrl').value = '';
+  document.getElementById('imgWidth').value = 100;
+  document.getElementById('imgWidthVal').textContent = '100%';
+  const preview = document.getElementById('imgPreview');
+  preview.style.display = 'none';
+  document.getElementById('imgModal').classList.add('show');
+}
+
+document.getElementById('imgUrl').addEventListener('input', function() {
+  const preview = document.getElementById('imgPreview');
+  if (this.value.trim()) {
+    preview.src = this.value.trim();
+    preview.style.display = 'block';
+  } else {
+    preview.style.display = 'none';
+  }
+});
+
+document.getElementById('imgWidth').addEventListener('input', function() {
+  document.getElementById('imgWidthVal').textContent = this.value + '%';
+});
+
+document.getElementById('imgModalCancel').addEventListener('click', () => {
+  document.getElementById('imgModal').classList.remove('show');
+});
+
+document.getElementById('imgModalInsert').addEventListener('click', () => {
+  const url = document.getElementById('imgUrl').value.trim();
+  const width = document.getElementById('imgWidth').value;
+  if (!url) return;
+  const range = quill.getSelection(true);
+  quill.insertEmbed(range.index, 'image', url);
+  // Apply width style to the inserted image
+  setTimeout(() => {
+    const imgs = quill.root.querySelectorAll('img');
+    imgs.forEach(img => {
+      if (img.src === url && !img.style.width) {
+        img.style.width = width + '%';
+        img.style.height = 'auto';
+      }
+    });
+  }, 50);
+  quill.setSelection(range.index + 1);
+  document.getElementById('imgModal').classList.remove('show');
+});
 
 // ── 工具函式 ──
 function extractYouTubeId(url) {
@@ -387,13 +533,6 @@ function extractYouTubeId(url) {
   const patterns = [/youtu\.be\/([^?&]+)/, /youtube\.com\/watch\?v=([^&]+)/, /youtube\.com\/embed\/([^?&]+)/];
   for (const p of patterns) { const m = url.match(p); if (m) return m[1]; }
   return null;
-}
-
-function calcReadTime(content) {
-  const text = content.replace(/<[^>]+>/g, '');
-  const chars = text.length;
-  const mins = Math.max(1, Math.round(chars / 400));
-  return { chars, mins };
 }
 
 function formatDate(ts) {
@@ -409,17 +548,9 @@ document.getElementById('fYoutube').addEventListener('input', function() {
     ? `<iframe src="https://www.youtube.com/embed/${ytId}?rel=0" allowfullscreen></iframe>` : '';
 });
 
-// ── 字數統計 ──
-document.getElementById('fContent').addEventListener('input', function() {
-  const { chars, mins } = calcReadTime(this.value);
-  document.getElementById('wcChars').textContent = chars.toLocaleString();
-  document.getElementById('wcMin').textContent = mins;
-});
-
 // ── 頭貼即時預覽 ──
 document.getElementById('sAuthorAvatar').addEventListener('input', function() {
-  const preview = document.getElementById('avatarPreview');
-  preview.innerHTML = this.value.trim()
+  document.getElementById('avatarPreview').innerHTML = this.value.trim()
     ? `<img src="${this.value.trim()}" alt="頭像">` : '頭像';
 });
 
@@ -435,13 +566,10 @@ onAuthStateChanged(auth, user => {
     document.getElementById('adminShell').style.display = 'none';
   }
 });
-
 document.getElementById('loginBtn').addEventListener('click', async () => {
-  const email = document.getElementById('loginEmail').value;
-  const pw = document.getElementById('loginPassword').value;
   const err = document.getElementById('loginError');
   err.textContent = '';
-  try { await signInWithEmailAndPassword(auth, email, pw); }
+  try { await signInWithEmailAndPassword(auth, document.getElementById('loginEmail').value, document.getElementById('loginPassword').value); }
   catch(e) { err.textContent = '帳號或密碼錯誤，請再試一次。'; }
 });
 document.getElementById('loginPassword').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('loginBtn').click(); });
@@ -451,7 +579,7 @@ document.getElementById('logoutBtn').addEventListener('click', () => signOut(aut
 async function loadPosts() {
   const tbody = document.getElementById('postTableBody');
   try {
-    const snap = await getDocs(query(collection(db, 'posts'), orderBy('createdAt', 'desc')));
+    const snap = await getDocs(query(collection(db,'posts'), orderBy('createdAt','desc')));
     allPostsCache = snap.docs.map(d => ({ id: d.id, ...d.data() }));
     renderTable(allPostsCache);
   } catch(e) { tbody.innerHTML = '<tr><td colspan="5" class="empty-table">載入失敗</td></tr>'; }
@@ -461,23 +589,20 @@ function renderTable(posts) {
   const tbody = document.getElementById('postTableBody');
   const filtered = currentFilter === 'all' ? posts
     : posts.filter(p => currentFilter === 'draft' ? p.status === 'draft' : p.status !== 'draft');
-  if (filtered.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="5" class="empty-table">${currentFilter === 'draft' ? '沒有草稿' : '還沒有文章，點右上角「新增文章」開始吧。'}</td></tr>`;
+  if (!filtered.length) {
+    tbody.innerHTML = `<tr><td colspan="5" class="empty-table">${currentFilter === 'draft' ? '沒有草稿' : '還沒有文章'}</td></tr>`;
     return;
   }
-  tbody.innerHTML = filtered.map(p => `
-    <tr>
-      <td class="title-cell">
-        ${p.pinned ? '<span class="pinned-badge">置頂</span> ' : ''}${p.title || '（無標題）'}
-      </td>
-      <td><span class="cat-badge">${p.category || '—'}</span></td>
-      <td><span class="status-badge ${p.status === 'draft' ? 'draft' : 'published'}">${p.status === 'draft' ? '草稿' : '已發布'}</span></td>
-      <td>${formatDate(p.createdAt)}</td>
-      <td><div class="tbl-actions">
-        <button class="btn-edit" onclick="editPost('${p.id}')">編輯</button>
-        <button class="btn-del" onclick="deletePost('${p.id}','${(p.title||'').replace(/'/g,"\\'")}')">刪除</button>
-      </div></td>
-    </tr>`).join('');
+  tbody.innerHTML = filtered.map(p => `<tr>
+    <td class="title-cell">${p.pinned ? '<span class="pinned-badge">置頂</span> ' : ''}${p.title || '（無標題）'}</td>
+    <td><span class="cat-badge">${p.category || '—'}</span></td>
+    <td><span class="status-badge ${p.status === 'draft' ? 'draft' : 'published'}">${p.status === 'draft' ? '草稿' : '已發布'}</span></td>
+    <td>${formatDate(p.createdAt)}</td>
+    <td><div class="tbl-actions">
+      <button class="btn-edit" onclick="editPost('${p.id}')">編輯</button>
+      <button class="btn-del" onclick="deletePost('${p.id}','${(p.title||'').replace(/'/g,"\\'")}')">刪除</button>
+    </div></td>
+  </tr>`).join('');
 }
 
 document.querySelectorAll('.filter-tab').forEach(btn => {
@@ -492,7 +617,7 @@ document.querySelectorAll('.filter-tab').forEach(btn => {
 // ── 編輯文章 ──
 window.editPost = async function(id) {
   editingId = id;
-  const snap = await getDoc(doc(db, 'posts', id));
+  const snap = await getDoc(doc(db,'posts',id));
   if (!snap.exists()) return;
   const p = snap.data();
   document.getElementById('fTitle').value = p.title || '';
@@ -502,21 +627,26 @@ window.editPost = async function(id) {
   document.getElementById('fYoutube').value = p.youtubeUrl || '';
   document.getElementById('fSeo').value = p.seoDescription || '';
   document.getElementById('fExcerpt').value = p.excerpt || '';
-  document.getElementById('fContent').value = p.content || '';
   document.getElementById('fPinned').checked = p.pinned || false;
   const ytId = extractYouTubeId(p.youtubeUrl || '');
   document.getElementById('ytPreview').innerHTML = ytId
     ? `<iframe src="https://www.youtube.com/embed/${ytId}?rel=0" allowfullscreen></iframe>` : '';
-  const { chars, mins } = calcReadTime(p.content || '');
-  document.getElementById('wcChars').textContent = chars.toLocaleString();
-  document.getElementById('wcMin').textContent = mins;
-  document.getElementById('editorTitle').textContent = '編輯文章';
   showPanel('editor', id);
+  setTimeout(() => {
+    if (quill) {
+      quill.clipboard.dangerouslyPasteHTML(p.content || '');
+      const text = quill.getText();
+      const chars = text.replace(/\s/g,'').length;
+      document.getElementById('wcChars').textContent = chars.toLocaleString();
+      document.getElementById('wcMin').textContent = Math.max(1, Math.round(chars/400));
+    }
+  }, 100);
+  document.getElementById('editorTitle').textContent = '編輯文章';
 };
 
 window.deletePost = async function(id, title) {
   if (!confirm(`確定要刪除「${title}」？此動作無法復原。`)) return;
-  await deleteDoc(doc(db, 'posts', id));
+  await deleteDoc(doc(db,'posts',id));
   loadPosts();
 };
 
@@ -526,8 +656,10 @@ async function savePost(status) {
   if (!title) { alert('請輸入文章標題'); return; }
   const statusEl = document.getElementById('saveStatus');
   statusEl.textContent = '儲存中…';
-  const content = document.getElementById('fContent').value;
-  const { mins } = calcReadTime(content);
+  const content = quill ? quill.root.innerHTML : '';
+  const text = quill ? quill.getText() : '';
+  const chars = text.replace(/\s/g,'').length;
+  const mins = Math.max(1, Math.round(chars / 400));
   const data = {
     title,
     category: document.getElementById('fCategory').value,
@@ -542,8 +674,8 @@ async function savePost(status) {
     status,
   };
   try {
-    if (editingId) { await updateDoc(doc(db, 'posts', editingId), data); }
-    else { data.createdAt = serverTimestamp(); await addDoc(collection(db, 'posts'), data); }
+    if (editingId) { await updateDoc(doc(db,'posts',editingId), data); }
+    else { data.createdAt = serverTimestamp(); await addDoc(collection(db,'posts'), data); }
     statusEl.textContent = status === 'draft' ? '草稿已儲存 ✓' : '已發布 ✓';
     setTimeout(() => { statusEl.textContent = ''; showPanel('posts'); loadPosts(); }, 1200);
   } catch(e) { statusEl.textContent = '儲存失敗'; alert('儲存失敗：' + e.message); }
@@ -556,7 +688,7 @@ document.getElementById('saveDraftBtn').addEventListener('click', () => savePost
 document.getElementById('togglePreview').addEventListener('click', () => {
   const wrap = document.getElementById('previewWrap');
   if (wrap.classList.toggle('show')) {
-    document.getElementById('previewContent').innerHTML = document.getElementById('fContent').value;
+    document.getElementById('previewContent').innerHTML = quill ? quill.root.innerHTML : '';
     wrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 });
@@ -564,48 +696,49 @@ document.getElementById('togglePreview').addEventListener('click', () => {
 // ── 網站設定 ──
 async function loadSettings() {
   try {
-    const siteSnap = await getDoc(doc(db, 'settings', 'site'));
+    const [siteSnap, authorSnap] = await Promise.all([
+      getDoc(doc(db,'settings','site')),
+      getDoc(doc(db,'settings','author'))
+    ]);
     if (siteSnap.exists()) {
       const s = siteSnap.data();
       document.getElementById('sSiteName').value = s.name || '';
       document.getElementById('sSiteTagline').value = s.tagline || '';
       document.getElementById('sSiteHero').value = s.hero || '';
     }
-    const authorSnap = await getDoc(doc(db, 'settings', 'author'));
     if (authorSnap.exists()) {
       const a = authorSnap.data();
       document.getElementById('sAuthorName').value = a.name || '';
       document.getElementById('sAuthorAvatar').value = a.avatar || '';
       document.getElementById('sAuthorOneliner').value = a.oneliner || '';
       document.getElementById('sAuthorBio').value = a.bio || '';
-      document.getElementById('avatarPreview').innerHTML = a.avatar
-        ? `<img src="${a.avatar}" alt="頭像">` : '頭像';
+      if (a.avatar) document.getElementById('avatarPreview').innerHTML = `<img src="${a.avatar}" alt="頭像">`;
     }
   } catch(e) { console.log('設定載入失敗', e); }
 }
 
 document.getElementById('saveSiteBtn').addEventListener('click', async () => {
   try {
-    await setDoc(doc(db, 'settings', 'site'), {
+    await setDoc(doc(db,'settings','site'), {
       name: document.getElementById('sSiteName').value.trim(),
       tagline: document.getElementById('sSiteTagline').value.trim(),
       hero: document.getElementById('sSiteHero').value.trim(),
     });
     document.getElementById('saveSiteBtn').textContent = '已儲存 ✓';
-    setTimeout(() => { document.getElementById('saveSiteBtn').textContent = '儲存網站資訊'; }, 1500);
+    setTimeout(() => document.getElementById('saveSiteBtn').textContent = '儲存網站資訊', 1500);
   } catch(e) { alert('儲存失敗：' + e.message); }
 });
 
 document.getElementById('saveAuthorBtn').addEventListener('click', async () => {
   try {
-    await setDoc(doc(db, 'settings', 'author'), {
+    await setDoc(doc(db,'settings','author'), {
       name: document.getElementById('sAuthorName').value.trim(),
       avatar: document.getElementById('sAuthorAvatar').value.trim(),
       oneliner: document.getElementById('sAuthorOneliner').value.trim(),
       bio: document.getElementById('sAuthorBio').value.trim(),
     });
     document.getElementById('saveAuthorBtn').textContent = '已儲存 ✓';
-    setTimeout(() => { document.getElementById('saveAuthorBtn').textContent = '儲存作者資訊'; }, 1500);
+    setTimeout(() => document.getElementById('saveAuthorBtn').textContent = '儲存作者資訊', 1500);
   } catch(e) { alert('儲存失敗：' + e.message); }
 });
 
@@ -621,21 +754,25 @@ window.showPanel = function(name, id) {
     document.getElementById('tabSettings').classList.add('active');
   } else {
     editingId = id || null;
+    document.getElementById('panelEditor').classList.add('active');
+    document.getElementById('tabNew').classList.add('active');
+    initQuill();
     if (!id) {
-      ['fTitle','fCategory','fTags','fCover','fYoutube','fSeo','fExcerpt','fContent'].forEach(i => {
-        const el = document.getElementById(i);
-        if (el.tagName === 'SELECT') el.value = '';
-        else el.value = '';
-      });
+      document.getElementById('fTitle').value = '';
+      document.getElementById('fCategory').value = '';
+      document.getElementById('fTags').value = '';
+      document.getElementById('fCover').value = '';
+      document.getElementById('fYoutube').value = '';
+      document.getElementById('fSeo').value = '';
+      document.getElementById('fExcerpt').value = '';
       document.getElementById('fPinned').checked = false;
       document.getElementById('ytPreview').innerHTML = '';
       document.getElementById('wcChars').textContent = '0';
       document.getElementById('wcMin').textContent = '0';
       document.getElementById('editorTitle').textContent = '新增文章';
       document.getElementById('previewWrap').classList.remove('show');
+      if (quill) quill.setContents([]);
     }
-    document.getElementById('panelEditor').classList.add('active');
-    document.getElementById('tabNew').classList.add('active');
   }
 };
 </script>
