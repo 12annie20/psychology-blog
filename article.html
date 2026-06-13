@@ -50,6 +50,26 @@ nav { position: sticky; top: 0; z-index: 100; background: rgba(247,244,239,0.95)
 .article-content .concept-box .label { font-family: 'Noto Sans TC'; font-size: 0.65rem; letter-spacing: 0.22em; color: var(--warm); display: block; margin-bottom: 0.7rem; }
 .article-content .concept-box p { font-family: 'Noto Sans TC'; font-size: 0.88rem; color: var(--ink-faint); margin-bottom: 0; }
 
+/* Quill callout box */
+.article-content .callout-box {
+  display: flex; gap: 0.9rem; align-items: flex-start;
+  background: rgba(201,169,110,0.08);
+  border: 1px solid rgba(201,169,110,0.25);
+  border-left: 3px solid var(--warm);
+  padding: 1.2rem 1.5rem;
+  margin: 2rem 0;
+}
+.article-content .callout-icon { font-size: 1.1rem; line-height: 1.8; flex-shrink: 0; }
+.article-content .callout-title {
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 0.65rem; letter-spacing: 0.2em; color: var(--warm);
+  display: block; margin-bottom: 0.5rem;
+}
+.article-content .callout-body {
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 0.9rem; color: var(--ink-faint); line-height: 1.9; margin-bottom: 0;
+}
+
 .article-tags { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--border); }
 .tag-item { font-size: 0.72rem; padding: 0.3rem 0.85rem; border: 1px solid var(--border); color: var(--ink-faint); letter-spacing: 0.05em; }
 
