@@ -4,6 +4,26 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>文章 — 安小姐的札記</title>
+<meta name="robots" content="index, follow">
+<meta name="author" content="安小姐">
+<link rel="canonical" id="canonicalLink" href="https://12annie20.github.io/psychology-blog/article.html">
+
+<!-- Open Graph (動態由 JS 填入) -->
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="安小姐的札記">
+<meta property="og:title" id="ogTitle" content="安小姐的札記">
+<meta property="og:description" id="ogDesc" content="">
+<meta property="og:image" id="ogImage" content="https://12annie20.github.io/psychology-blog/og-cover.jpg">
+<meta property="og:url" id="ogUrl" content="">
+<meta property="og:locale" content="zh_TW">
+<meta property="article:author" content="安小姐">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" id="twTitle" content="安小姐的札記">
+<meta name="twitter:description" id="twDesc" content="">
+<meta name="twitter:image" id="twImage" content="https://12annie20.github.io/psychology-blog/og-cover.jpg">
+
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@200;300;400;500&family=Noto+Sans+TC:wght@200;300;400&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -430,6 +450,45 @@ async function render() {
     if (post.status === 'draft') { document.getElementById('articleWrap').innerHTML='<div style="padding:5rem 2rem;text-align:center;color:var(--ink-faint)">這篇文章尚未發布。</div>'; return; }
 
     document.title = `${post.title} — 安小姐的札記`;
+
+    // ── SEO: Dynamic OG + JSON-LD ──
+    const pageUrl = `https://12annie20.github.io/psychology-blog/article.html?id=${post.id}`;
+    const seoDesc = post.seoDescription || post.excerpt || '安小姐的札記——用白話說心理學的故事。';
+    const ogImg = post.coverImage || 'https://12annie20.github.io/psychology-blog/og-cover.jpg';
+
+    // Update meta tags
+    const setMeta = (id, val) => { const el = document.getElementById(id); if (el) el.content = val; };
+    setMeta('ogTitle', post.title + ' — 安小姐的札記');
+    setMeta('ogDesc', seoDesc);
+    setMeta('ogImage', ogImg);
+    setMeta('ogUrl', pageUrl);
+    setMeta('twTitle', post.title + ' — 安小姐的札記');
+    setMeta('twDesc', seoDesc);
+    setMeta('twImage', ogImg);
+    const canonical = document.getElementById('canonicalLink');
+    if (canonical) canonical.href = pageUrl;
+
+    // Update <meta name="description">
+    let descMeta = document.querySelector('meta[name="description"]');
+    if (!descMeta) { descMeta = document.createElement('meta'); descMeta.name = 'description'; document.head.appendChild(descMeta); }
+    descMeta.content = seoDesc;
+
+    // JSON-LD structured data
+    const jsonLd = {
+      '@context': 'https://schema.org',
+      '@type': 'Article',
+      'headline': post.title,
+      'description': seoDesc,
+      'image': ogImg,
+      'author': { '@type': 'Person', 'name': '安小姐' },
+      'publisher': { '@type': 'Organization', 'name': '安小姐的札記', 'url': 'https://12annie20.github.io/psychology-blog/' },
+      'url': pageUrl,
+      'datePublished': post.createdAt ? (post.createdAt.toDate ? post.createdAt.toDate().toISOString() : new Date(post.createdAt).toISOString()) : '',
+      'inLanguage': 'zh-TW'
+    };
+    let ldScript = document.getElementById('jsonLd');
+    if (!ldScript) { ldScript = document.createElement('script'); ldScript.id = 'jsonLd'; ldScript.type = 'application/ld+json'; document.head.appendChild(ldScript); }
+    ldScript.textContent = JSON.stringify(jsonLd);
     if (post.seoDescription||post.excerpt) { const m=document.createElement('meta');m.name='description';m.content=post.seoDescription||post.excerpt;document.head.appendChild(m); }
 
     // Hero
