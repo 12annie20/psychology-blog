@@ -259,6 +259,23 @@ body { background: #f0ede7; color: var(--ink); font-family: 'Noto Sans TC', sans
 .modal-btn.primary { background: var(--warm); border-color: var(--warm); color: var(--dim); }
 .modal-btn.primary:hover { background: var(--accent); border-color: var(--accent); color: #f0ebe3; }
 
+
+/* MUSIC BLOCKS */
+.music-block {
+  background: #faf8f4; border: 1px solid var(--border); padding: 1rem 1.2rem;
+  margin-bottom: 0.8rem; display: grid; grid-template-columns: 1fr 1fr auto; gap: 0.8rem; align-items: end;
+}
+.music-block .mb-label { font-size: 0.65rem; letter-spacing: 0.15em; color: var(--ink-faint); display: block; margin-bottom: 0.4rem; }
+.music-block input { padding: 0.6rem 0.8rem; border: 1px solid var(--border); background: #fff; font-family: inherit; font-size: 0.82rem; color: var(--ink); outline: none; width: 100%; }
+.music-block input:focus { border-color: var(--warm); }
+.music-block .mb-row { display: flex; gap: 0.6rem; align-items: flex-end; }
+.music-block .mb-sec { width: 80px; }
+.btn-remove-music { background: none; border: 1px solid transparent; padding: 0.5rem 0.6rem; cursor: pointer; color: rgba(192,57,43,0.4); font-family: inherit; font-size: 0.8rem; transition: all 0.2s; align-self: flex-end; }
+.btn-remove-music:hover { border-color: var(--red); color: var(--red); }
+.btn-add-music { background: none; border: 1px dashed var(--border); padding: 0.6rem 1.2rem; font-family: inherit; font-size: 0.75rem; color: var(--ink-faint); cursor: pointer; width: 100%; transition: all 0.2s; margin-top: 0.3rem; }
+.btn-add-music:hover { border-color: var(--warm); color: var(--accent); }
+@media (max-width: 640px) { .music-block { grid-template-columns: 1fr; } }
+
 /* SETTINGS */
 .settings-section { background: #fff; padding: 2rem 2.5rem; margin-bottom: 1.5rem; }
 .settings-section h3 { font-family: 'Noto Serif TC', serif; font-weight: 300; font-size: 1rem; margin-bottom: 1.5rem; padding-bottom: 0.8rem; border-bottom: 1px solid var(--border); }
@@ -394,10 +411,27 @@ body { background: #f0ede7; color: var(--ink); font-family: 'Noto Sans TC', sans
           <div class="form-group full"><label>摘要 <span class="lbadge">首頁卡片</span></label><textarea id="fExcerpt" rows="2" placeholder="一句話描述文章…"></textarea></div>
         </div>
 
+
+        <div class="form-row" id="musicSection">
+          <div class="form-group full">
+            <label>段落音樂設定 <span class="lbadge">沉浸式閱讀</span></label>
+            <div id="musicBlocks"></div>
+            <button class="btn-add-music" id="addMusicBlock" type="button">＋ 新增音樂段落</button>
+            <div class="fhint">每個段落可設定一首 YouTube 音樂，讀者滑到該段落時自動播放。開始秒數可以指定從歌曲的哪個時間點開始。</div>
+          </div>
+        </div>
+
         <!-- 編輯器 -->
         <div class="form-group full" style="margin-bottom:1.5rem;">
           <label>文章內容 <span class="lbadge">輸入 / 開啟區塊選單</span></label>
           <div class="tt-toolbar" id="ttToolbar">
+            <select class="tt-select" id="ttFont" title="字體">
+              <option value="">預設字體</option>
+              <option value="'Noto Serif TC', serif">宋體（Noto Serif）</option>
+              <option value="'Noto Sans TC', sans-serif">黑體（Noto Sans）</option>
+              <option value="Georgia, serif">Georgia</option>
+            </select>
+            <div class="sep"></div>
             <select class="tt-select" id="ttHeading" title="段落格式">
               <option value="0">一般文字</option>
               <option value="1">H1 大標題</option>
@@ -553,7 +587,20 @@ document.getElementById('ttQuote').addEventListener('click', () => {
 
 // Callout
 document.getElementById('ttCallout').addEventListener('click', () => {
-  insertHTML(`<div class="callout"><span class="callout-icon">💡</span><div class="callout-content"><span class="callout-title" contenteditable="true">心理學概念｜概念名稱</span><div class="callout-body" contenteditable="true">在這裡輸入說明…</div></div></div><p><br></p>`);
+  insertHTML(`<div class="callout" contenteditable="false"><span class="callout-icon">💡</span><div class="callout-content"><div class="callout-title" contenteditable="true">心理學概念｜概念名稱</div><div class="callout-body" contenteditable="true">在這裡輸入說明…</div></div></div><p><br></p>`);
+  // intercept paste inside callout
+  setTimeout(() => {
+    document.querySelectorAll('.callout [contenteditable="true"]').forEach(el => {
+      if (el._pasteBound) return;
+      el._pasteBound = true;
+      el.addEventListener('paste', e => {
+        e.preventDefault();
+        e.stopPropagation();
+        const text = (e.clipboardData || window.clipboardData).getData('text/plain');
+        document.execCommand('insertText', false, text);
+      });
+    });
+  }, 100);
 });
 
 // HR
@@ -595,6 +642,13 @@ function insertHTML(html) {
   editor.classList.remove('is-empty');
   updateWordCount();
 }
+
+
+// Font family
+document.getElementById('ttFont').addEventListener('change', function() {
+  editor.focus();
+  if (this.value) document.execCommand('fontName', false, this.value);
+});
 
 // ── TOOLBAR STATE ──
 function updateToolbarState() {
@@ -803,6 +857,15 @@ document.addEventListener('click', e => {
 
 editor.addEventListener('input', bindImgControls);
 
+
+// ── PASTE: strip all formatting, paste plain text only ──
+editor.addEventListener('paste', e => {
+  e.preventDefault();
+  const text = (e.clipboardData || window.clipboardData).getData('text/plain');
+  document.execCommand('insertText', false, text);
+});
+
+// ── FONT FAMILY ──
 // ── YOUTUBE PREVIEW ──
 function extractYouTubeId(url) {
   if (!url) return null;
@@ -889,6 +952,8 @@ window.editPost = async function(id) {
   editor.classList.remove('is-empty');
   bindImgControls();
   updateWordCount();
+  musicBlocks = Array.isArray(p.musicBlocks) ? p.musicBlocks : [];
+  renderMusicBlocks();
   document.getElementById('editorTitle').textContent = '編輯文章';
   showPanel('editor', id);
 };
@@ -916,6 +981,7 @@ async function savePost(status) {
     excerpt: document.getElementById('fExcerpt').value.trim(),
     content, pinned: document.getElementById('fPinned').checked,
     readTime: Math.max(1, Math.round(chars/400)), status,
+    musicBlocks: musicBlocks.filter(b => b.trigger && b.url),
   };
   try {
     if (editingId) { await updateDoc(doc(db,'posts',editingId), data); }
@@ -954,6 +1020,45 @@ document.getElementById('saveAuthorBtn').addEventListener('click', async () => {
   try { await setDoc(doc(db,'settings','author'), { name: document.getElementById('sAuthorName').value.trim(), avatar: document.getElementById('sAuthorAvatar').value.trim(), oneliner: document.getElementById('sAuthorOneliner').value.trim(), bio: document.getElementById('sAuthorBio').value.trim() }); document.getElementById('saveAuthorBtn').textContent='已儲存 ✓'; setTimeout(()=>document.getElementById('saveAuthorBtn').textContent='儲存作者資訊',1500); } catch(e) { alert(e.message); }
 });
 
+
+// ── MUSIC BLOCKS ──
+let musicBlocks = [];
+
+function renderMusicBlocks() {
+  const container = document.getElementById('musicBlocks');
+  container.innerHTML = '';
+  musicBlocks.forEach((block, i) => {
+    const div = document.createElement('div');
+    div.className = 'music-block';
+    div.innerHTML = `
+      <div>
+        <span class="mb-label">段落關鍵字（滑到含此文字的段落時觸發）</span>
+        <input type="text" class="mb-trigger" placeholder="例如：二、灰燼中" value="${block.trigger||''}">
+      </div>
+      <div>
+        <span class="mb-label">YouTube 連結</span>
+        <input type="url" class="mb-url" placeholder="https://youtu.be/xxxxxxxx" value="${block.url||''}">
+      </div>
+      <div class="mb-row">
+        <div>
+          <span class="mb-label">開始秒數</span>
+          <input type="number" class="mb-sec" placeholder="0" min="0" value="${block.startSec||0}">
+        </div>
+        <button class="btn-remove-music" data-idx="${i}" type="button">✕</button>
+      </div>`;
+    div.querySelector('.mb-trigger').addEventListener('input', e => { musicBlocks[i].trigger = e.target.value; });
+    div.querySelector('.mb-url').addEventListener('input', e => { musicBlocks[i].url = e.target.value; });
+    div.querySelector('.mb-sec').addEventListener('input', e => { musicBlocks[i].startSec = parseInt(e.target.value)||0; });
+    div.querySelector('.btn-remove-music').addEventListener('click', () => { musicBlocks.splice(i,1); renderMusicBlocks(); });
+    container.appendChild(div);
+  });
+}
+
+document.getElementById('addMusicBlock').addEventListener('click', () => {
+  musicBlocks.push({ trigger: '', url: '', startSec: 0 });
+  renderMusicBlocks();
+});
+
 // ── PANEL SWITCH ──
 window.showPanel = function(name, id) {
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
@@ -974,6 +1079,8 @@ window.showPanel = function(name, id) {
       document.getElementById('wcMin').textContent='0';
       document.getElementById('editorTitle').textContent='新增文章';
       document.getElementById('previewWrap').classList.remove('show');
+      musicBlocks = [];
+      renderMusicBlocks();
     }
   }
 };
