@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /admin.html
+
+Sitemap: https://12annie20.github.io/psychology-blog/sitemap.xml
