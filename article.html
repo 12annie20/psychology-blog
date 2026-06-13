@@ -179,7 +179,7 @@ footer { background: var(--dim); padding: 2.5rem clamp(1.5rem,5vw,3rem); margin-
 
 <nav>
   <div class="nav-inner">
-    <a href="index.html" class="nav-logo">晴空萬里<span>・</span>言言善也</a>
+    <a href="index.html" class="nav-logo">安小姐的<span>札記</span></a>
     <a href="index.html" class="nav-back">← 返回首頁</a>
   </div>
 </nav>
@@ -193,7 +193,7 @@ footer { background: var(--dim); padding: 2.5rem clamp(1.5rem,5vw,3rem); margin-
   </div>
 </div>
 
-<footer><div class="footer-logo">晴空萬里<span>・</span>言言善也</div></footer>
+<footer><div class="footer-logo">安小姐的<span>札記</span></div></footer>
 
 <!-- Hidden YT iframe container -->
 <div id="ytHiddenContainer"><div id="ytIframe"></div></div>
@@ -429,7 +429,7 @@ async function render() {
     const post = { id: snap.id, ...snap.data() };
     if (post.status === 'draft') { document.getElementById('articleWrap').innerHTML='<div style="padding:5rem 2rem;text-align:center;color:var(--ink-faint)">這篇文章尚未發布。</div>'; return; }
 
-    document.title = `${post.title} — 晴空萬里・言言善也`;
+    document.title = `${post.title} — 安小姐的札記`;
     if (post.seoDescription||post.excerpt) { const m=document.createElement('meta');m.name='description';m.content=post.seoDescription||post.excerpt;document.head.appendChild(m); }
 
     // Hero
