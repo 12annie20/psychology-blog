@@ -50,7 +50,7 @@ nav { position: sticky; top: 0; z-index: 100; background: rgba(247,244,239,0.95)
 .nav-hamburger { display: none; background: none; border: none; cursor: pointer; flex-direction: column; gap: 5px; }
 .nav-hamburger span { display: block; width: 22px; height: 1.5px; background: var(--ink-soft); transition: all 0.3s; }
 
-.hero { background: var(--dim); min-height: 45vh; display: flex; flex-direction: column; justify-content: flex-end; padding: 0 clamp(2rem,8vw,9rem) clamp(2.5rem,6vh,5rem); position: relative; overflow: hidden; }
+.hero { background: var(--dim); min-height: 35vh; display: flex; flex-direction: column; justify-content: flex-end; padding: 0 clamp(2rem,8vw,9rem) clamp(2.5rem,6vh,5rem); position: relative; overflow: hidden; }
 .hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 70% 55% at 75% 25%, rgba(201,169,110,0.10) 0%, transparent 60%), radial-gradient(ellipse 45% 70% at 5% 85%, rgba(122,92,74,0.15) 0%, transparent 55%); pointer-events: none; }
 .hero-eyebrow { font-size: 0.65rem; font-weight: 200; letter-spacing: 0.32em; color: var(--warm); margin-bottom: 1.8rem; position: relative; }
 .hero-title { font-family: 'Noto Serif TC', serif; font-weight: 200; font-size: clamp(2.8rem,7vw,5.5rem); line-height: 1.18; color: #f0ebe3; max-width: 16ch; position: relative; }
@@ -371,16 +371,22 @@ async function loadPosts(cat = 'all', append = false) {
     lastDoc = null;
   }
   try {
-    const base = [collection(db,'posts'), orderBy('createdAt','desc')];
-    if (cat !== 'all') base.push(where('category','==',cat));
-    base.push(limit(PAGE_SIZE));
-    if (append && lastDoc) base.push(startAfter(lastDoc));
-    const snap = await getDocs(query(...base));
-    const posts = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    lastDoc = snap.docs[snap.docs.length - 1];
+    // 先抓所有文章再前端篩選，避免 Firestore 複合索引問題
+    const snap = await getDocs(query(collection(db,'posts'), orderBy('createdAt','desc')));
+    let posts = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    // 前端篩選分類與草稿
+    if (cat !== 'all') posts = posts.filter(p => p.category === cat);
+    posts = posts.filter(p => p.status !== 'draft');
+    // 置頂排序
+    posts.sort((a,b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0));
+    // 分頁
+    const pageStart = append ? (window._pageOffset || 0) : 0;
+    const pagePosts = posts.slice(pageStart, pageStart + PAGE_SIZE);
+    window._pageOffset = pageStart + pagePosts.length;
+    window._allFilteredPosts = posts;
     if (!append && cat === 'all') { renderRecent(posts); renderStrip(posts); }
-    renderCards(posts, append);
-    document.getElementById('loadMoreWrap').style.display = posts.length === PAGE_SIZE ? 'block' : 'none';
+    renderCards(pagePosts, append);
+    document.getElementById('loadMoreWrap').style.display = posts.length > window._pageOffset ? 'block' : 'none';
   } catch(e) {
     container.innerHTML = `<div class="empty-state"><p>載入失敗，請稍後再試。</p></div>`;
   }
