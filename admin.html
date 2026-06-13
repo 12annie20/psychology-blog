@@ -191,6 +191,39 @@ body { background: #f0ede7; color: var(--ink); font-family: 'Noto Sans TC', sans
 .preview-content img { max-width: 100%; margin: 1.5rem 0; display: block; }
 .preview-content .concept-box { background: rgba(201,169,110,0.07); padding: 1.5rem 1.8rem; margin: 2rem 0; border-top: 1px solid rgba(201,169,110,0.25); }
 
+/* CALLOUT BOX — inside Quill editor */
+.ql-editor .callout-box {
+  display: flex; gap: 0.9rem; align-items: flex-start;
+  background: rgba(201,169,110,0.08);
+  border: 1px solid rgba(201,169,110,0.3);
+  border-left: 3px solid var(--warm);
+  padding: 1rem 1.2rem;
+  margin: 1.2rem 0;
+  border-radius: 2px;
+}
+.ql-editor .callout-icon {
+  font-size: 1.1rem; line-height: 1.6; flex-shrink: 0; user-select: none;
+}
+.ql-editor .callout-title {
+  font-size: 0.72rem; letter-spacing: 0.18em; color: var(--warm);
+  font-family: 'Noto Sans TC', sans-serif; display: block; margin-bottom: 0.3rem;
+}
+.ql-editor .callout-body {
+  font-size: 0.9rem; color: var(--ink-soft); line-height: 1.85;
+  font-family: 'Noto Sans TC', sans-serif; min-width: 10px;
+}
+
+/* Custom toolbar buttons */
+.ql-callout-btn, .ql-quote-btn {
+  font-size: 0.7rem !important;
+  font-family: 'Noto Sans TC', sans-serif !important;
+  color: var(--ink-soft) !important;
+  width: auto !important;
+  padding: 0 6px !important;
+  letter-spacing: 0.05em;
+}
+.ql-callout-btn:hover, .ql-quote-btn:hover { color: var(--accent) !important; }
+
 /* IMAGE INSERT MODAL */
 .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(26,22,18,0.6); z-index: 500; align-items: center; justify-content: center; }
 .modal-overlay.show { display: flex; }
@@ -460,15 +493,29 @@ function initQuill() {
           [{ 'color': [] }, { 'background': [] }],
           [{ 'size': ['small', false, 'large', 'huge'] }],
           [{ 'align': [] }],
-          ['blockquote', 'code-block'],
+          ['blockquote'],
           [{ 'list': 'ordered' }, { 'list': 'bullet' }],
           ['link', 'image'],
+          ['callout-btn', 'quote-btn'],
           ['clean']
         ],
-        handlers: { image: imageHandler }
+        handlers: {
+          image: imageHandler,
+          'callout-btn': insertCallout,
+          'quote-btn': insertQuote
+        }
       }
     }
   });
+
+  // 自訂按鈕文字
+  setTimeout(() => {
+    const toolbar = quill.getModule('toolbar');
+    const calloutBtn = toolbar.container.querySelector('.ql-callout-btn');
+    const quoteBtn = toolbar.container.querySelector('.ql-quote-btn');
+    if (calloutBtn) calloutBtn.innerHTML = '💡 標註框';
+    if (quoteBtn) quoteBtn.innerHTML = '❝ 引言框';
+  }, 0);
 
   quill.on('text-change', () => {
     const text = quill.getText();
@@ -477,6 +524,20 @@ function initQuill() {
     document.getElementById('wcChars').textContent = chars.toLocaleString();
     document.getElementById('wcMin').textContent = mins;
   });
+}
+
+// ── 插入標註框（心理學概念框）──
+function insertCallout() {
+  const range = quill.getSelection(true);
+  const html = `<div class="callout-box"><span class="callout-icon">💡</span><div><span class="callout-title">心理學概念｜概念名稱</span><div class="callout-body">在這裡輸入解說內容…</div></div></div><p><br></p>`;
+  quill.clipboard.dangerouslyPasteHTML(range.index, html);
+}
+
+// ── 插入引言框 ──
+function insertQuote() {
+  const range = quill.getSelection(true);
+  const html = `<blockquote>在這裡輸入台詞或引言…</blockquote><p><br></p>`;
+  quill.clipboard.dangerouslyPasteHTML(range.index, html);
 }
 
 // ── 圖片插入（自訂 handler 打開 modal）──
