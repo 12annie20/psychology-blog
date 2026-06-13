@@ -578,7 +578,39 @@ function updateWordCount() {
 document.querySelectorAll('.tt-btn[data-cmd]').forEach(btn => {
   btn.addEventListener('click', () => {
     editor.focus();
-    document.execCommand(btn.dataset.cmd, false, null);
+    if (btn.dataset.cmd === 'removeFormat') {
+      // Also unwrap any blockquotes in the selection
+      document.execCommand('removeFormat', false, null);
+      document.execCommand('formatBlock', false, 'p');
+      // Unwrap blockquote elements that are selected or contain the cursor
+      const sel = window.getSelection();
+      if (sel && sel.rangeCount) {
+        const range = sel.getRangeAt(0);
+        const container = range.commonAncestorContainer;
+        const root = container.nodeType === 1 ? container : container.parentElement;
+        // Find blockquote ancestors up to editor
+        let node = root;
+        while (node && node !== editor) {
+          if (node.tagName === 'BLOCKQUOTE') {
+            const parent = node.parentNode;
+            while (node.firstChild) parent.insertBefore(node.firstChild, node);
+            parent.removeChild(node);
+            break;
+          }
+          node = node.parentNode;
+        }
+        // Also handle multiple blockquotes if selection spans them
+        editor.querySelectorAll('blockquote').forEach(bq => {
+          if (sel.containsNode(bq, true)) {
+            const parent = bq.parentNode;
+            while (bq.firstChild) parent.insertBefore(bq.firstChild, bq);
+            parent.removeChild(bq);
+          }
+        });
+      }
+    } else {
+      document.execCommand(btn.dataset.cmd, false, null);
+    }
     updateToolbarState();
   });
 });
