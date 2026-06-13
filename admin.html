@@ -173,6 +173,17 @@ body { background: #f0ede7; color: var(--ink); font-family: 'Noto Sans TC', sans
   min-height: 1.2rem; outline: none;
 }
 
+/* Callout delete button */
+.tt-editor .callout { position: relative; }
+.callout-del-btn {
+  position: absolute; top: 0.4rem; right: 0.4rem;
+  background: none; border: none; color: rgba(138,129,122,0.4);
+  cursor: pointer; font-size: 0.7rem; padding: 0.15rem 0.35rem;
+  border-radius: 2px; line-height: 1; transition: all 0.15s;
+}
+.callout-del-btn:hover { background: rgba(192,57,43,0.1); color: var(--red); }
+
+
 /* Placeholder */
 .tt-editor.is-empty::before {
   content: attr(data-placeholder);
@@ -431,6 +442,14 @@ body { background: #f0ede7; color: var(--ink); font-family: 'Noto Sans TC', sans
               <option value="'Noto Sans TC', sans-serif">黑體（Noto Sans）</option>
               <option value="Georgia, serif">Georgia</option>
             </select>
+            <select class="tt-select" id="ttFontSize" title="字體大小">
+              <option value="">字體大小</option>
+              <option value="0.8rem">小字</option>
+              <option value="1rem">一般</option>
+              <option value="1.15rem">中字</option>
+              <option value="1.35rem">大字</option>
+              <option value="1.6rem">超大</option>
+            </select>
             <div class="sep"></div>
             <select class="tt-select" id="ttHeading" title="段落格式">
               <option value="0">一般文字</option>
@@ -585,23 +604,27 @@ document.getElementById('ttQuote').addEventListener('click', () => {
   document.execCommand('formatBlock', false, 'blockquote');
 });
 
-// Callout
+// Callout — outer is editable so cursor can go before/after it; inner fields are also editable
 document.getElementById('ttCallout').addEventListener('click', () => {
-  insertHTML(`<div class="callout" contenteditable="false"><span class="callout-icon">💡</span><div class="callout-content"><div class="callout-title" contenteditable="true">心理學概念｜概念名稱</div><div class="callout-body" contenteditable="true">在這裡輸入說明…</div></div></div><p><br></p>`);
-  // intercept paste inside callout
-  setTimeout(() => {
-    document.querySelectorAll('.callout [contenteditable="true"]').forEach(el => {
-      if (el._pasteBound) return;
-      el._pasteBound = true;
-      el.addEventListener('paste', e => {
-        e.preventDefault();
-        e.stopPropagation();
-        const text = (e.clipboardData || window.clipboardData).getData('text/plain');
-        document.execCommand('insertText', false, text);
-      });
-    });
-  }, 100);
+  // Use a table-like wrapper so Enter after the callout works normally
+  const uid = 'c' + Date.now();
+  insertHTML(`<div class="callout" data-callout="${uid}"><span class="callout-icon" contenteditable="false">💡</span><div class="callout-content"><div class="callout-title">心理學概念｜概念名稱</div><div class="callout-body">在這裡輸入說明…</div></div></div><p><br></p>`);
+  bindCalloutDelete();
 });
+
+// Delete callout: click × button or select entire block and press Delete
+function bindCalloutDelete() {
+  editor.querySelectorAll('.callout:not([data-del-bound])').forEach(box => {
+    box.setAttribute('data-del-bound','1');
+    // Add delete button
+    const delBtn = document.createElement('button');
+    delBtn.className = 'callout-del-btn';
+    delBtn.textContent = '✕';
+    delBtn.title = '刪除標註框';
+    delBtn.addEventListener('click', e => { e.preventDefault(); box.remove(); });
+    box.appendChild(delBtn);
+  });
+}
 
 // HR
 document.getElementById('ttHr').addEventListener('click', () => {
@@ -647,7 +670,34 @@ function insertHTML(html) {
 // Font family
 document.getElementById('ttFont').addEventListener('change', function() {
   editor.focus();
-  if (this.value) document.execCommand('fontName', false, this.value);
+  if (this.value) {
+    const sel = window.getSelection();
+    if (sel && !sel.isCollapsed) {
+      document.execCommand('fontName', false, this.value);
+    }
+  }
+});
+
+// Font size — wrap selection in <span style="font-size:...">
+document.getElementById('ttFontSize').addEventListener('change', function() {
+  const size = this.value;
+  if (!size) return;
+  editor.focus();
+  const sel = window.getSelection();
+  if (!sel || sel.isCollapsed) { this.value = ''; return; }
+  const range = sel.getRangeAt(0);
+  const span = document.createElement('span');
+  span.style.fontSize = size;
+  try {
+    range.surroundContents(span);
+  } catch(e) {
+    // Fallback for partial selections across nodes
+    const frag = range.extractContents();
+    span.appendChild(frag);
+    range.insertNode(span);
+  }
+  sel.removeAllRanges();
+  this.value = '';
 });
 
 // ── TOOLBAR STATE ──
@@ -948,14 +998,20 @@ window.editPost = async function(id) {
   document.getElementById('fPinned').checked = p.pinned||false;
   const ytId = extractYouTubeId(p.youtubeUrl||'');
   document.getElementById('ytPreview').innerHTML = ytId ? `<iframe src="https://www.youtube.com/embed/${ytId}?rel=0" allowfullscreen></iframe>` : '';
-  editor.innerHTML = p.content || '';
-  editor.classList.remove('is-empty');
-  bindImgControls();
-  updateWordCount();
   musicBlocks = Array.isArray(p.musicBlocks) ? p.musicBlocks : [];
   renderMusicBlocks();
   document.getElementById('editorTitle').textContent = '編輯文章';
+  // Show panel first so editor is visible, then set content
   showPanel('editor', id);
+  // Set content after panel is shown
+  requestAnimationFrame(() => {
+    editor.innerHTML = p.content || '';
+    if (editor.innerHTML.trim()) editor.classList.remove('is-empty');
+    else editor.classList.add('is-empty');
+    bindImgControls();
+    bindCalloutDelete();
+    updateWordCount();
+  });
 };
 
 window.deletePost = async function(id, title) {
@@ -997,7 +1053,11 @@ document.getElementById('saveDraftBtn').addEventListener('click', () => savePost
 document.getElementById('togglePreview').addEventListener('click', () => {
   const wrap = document.getElementById('previewWrap');
   if (wrap.classList.toggle('show')) {
-    document.getElementById('previewContent').innerHTML = editor.innerHTML;
+    // Clone content, strip editor-only elements before preview
+    const clone = editor.cloneNode(true);
+    clone.querySelectorAll('.callout-del-btn, .img-resize-handle, .img-toolbar').forEach(el => el.remove());
+    clone.querySelectorAll('.img-resize-wrap').forEach(w => w.classList.remove('selected'));
+    document.getElementById('previewContent').innerHTML = clone.innerHTML;
     wrap.scrollIntoView({ behavior:'smooth', block:'start' });
   }
 });
